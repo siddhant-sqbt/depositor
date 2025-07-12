@@ -13,6 +13,9 @@ import OptionalFeaturesSection from "./components/OptionalFeaturesSection";
 import ContactDetailsSection from "./components/ContactDetailsSection";
 import BankDetailsSection from "./components/BankDetailsSection";
 import PrefferedLocationSection from "./components/PrefferedLocationSection";
+import { STATE_PINCODE_OPTIONS } from "@/lib/constants";
+import { DocumentUploadTable } from "./components/DocumentsSection";
+import { toast } from "sonner";
 
 const RegisterDepositorForm = () => {
   const form = useForm<DocumentFormValues>({
@@ -41,8 +44,59 @@ const RegisterDepositorForm = () => {
     },
   });
 
+  const selectedState = form.watch("state") || "";
+
   const onSubmit = (data: DocumentFormValues) => {
-    console.log("Form Data", data);
+    console.log("form submitted");
+    // toast("Aadhar card, PAN Card is required");
+
+    console.log("data: ", data);
+
+    // Check PAN Card validation
+    if (data.panNumber && !data.documents.panCard) {
+      toast("PAN Card document is required when PAN number is provided");
+    }
+
+    // Check Aadhaar Card validation
+    if (data.aadhaarNumber && !data.documents.aadhaarCard) {
+      toast("Aadhaar Card document is required when Aadhaar number is provided");
+    }
+
+    // Check GST Certificate validation
+    if (data.gstNumber && !data.documents.gstCertificate) {
+      toast("GST Certificate document is required when GST number is provided");
+    }
+
+    // Check TAN Document validation
+    if (data.tanNumber && data.documents.tanDocument?.length === 0) {
+      toast("TAN Document is required when TAN number is provided");
+    }
+
+    // Clear previous errors
+    form.clearErrors("pinNumber");
+
+    // Validate pincode
+    const pincode = Number(data.pinNumber);
+    const selectedStateObj = STATE_PINCODE_OPTIONS.find((s) => s.value === Number(selectedState));
+
+    if (!selectedStateObj) {
+      form.setError("pinNumber", {
+        type: "manual",
+        message: "Please select a state first",
+      });
+      return;
+    }
+
+    const min = selectedStateObj.minPincode ?? 0;
+    const max = selectedStateObj.maxPincode ?? 999999;
+
+    if (pincode < min || pincode > max) {
+      form.setError("pinNumber", {
+        type: "manual",
+        message: `Pincode must be between ${min} and ${max} for the selected state`,
+      });
+      return;
+    }
   };
 
   return (
@@ -60,6 +114,7 @@ const RegisterDepositorForm = () => {
           <OptionalFeaturesSection form={form} />
           <ContactDetailsSection form={form} />
           <BankDetailsSection form={form} />
+          <DocumentUploadTable form={form} />
         </div>
 
         <Button type="submit">Submit</Button>

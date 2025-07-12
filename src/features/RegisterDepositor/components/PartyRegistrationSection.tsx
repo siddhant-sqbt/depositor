@@ -3,15 +3,45 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { partyTypeMapping, type PANFourthChar } from "@/lib/constants";
-import type { DocumentFormValues } from "@/lib/types";
+import { defaultPartyTypeMapping, partyTypeMapping, STATE_PINCODE_OPTIONS, type PANFourthChar } from "@/lib/constants";
+import { registerDepositorFormSchema } from "@/lib/schema";
+import type { DocumentFormValues, IDistrict, IStateObject } from "@/lib/types";
+import { getFieldRequiredStatus } from "@/lib/utils";
 import { CircleUserRound } from "lucide-react";
-import { useMemo } from "react";
-import type { UseFormReturn } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { type UseFormReturn } from "react-hook-form";
+import api from "@/lib/axios";
 
 const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panNumber = form.watch("panNumber") || "";
+  const selectedState = form.watch("state") || "";
+  const gstNumber = form.watch("gstNumber") || "";
+  const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
+
+  useEffect(() => {
+    console.log("triggered: ", stateCode);
+    if (stateCode) {
+      form.setValue("state", stateCode.toString());
+    }
+  }, [stateCode]);
+
+  console.log("form", form.getValues());
+
+  const selectedPartyType = form.watch("partyType") || "";
   const fourthChar = panNumber.length >= 4 ? panNumber[3].toUpperCase() : "";
+
+  useEffect(() => {
+    form.setValue("district", "");
+  }, [selectedState]);
+
+  useEffect(() => {
+    form.setValue("subPartyType", "");
+  }, [selectedPartyType]);
+
+  useEffect(() => {
+    form.setValue("partyType", "");
+    form.setValue("subPartyType", "");
+  }, [panNumber]);
 
   const { partyType = [], subPartyType = [] } = useMemo(() => {
     form.setValue("partyType", "");
@@ -19,10 +49,34 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
     if (fourthChar in partyTypeMapping) {
       return partyTypeMapping[fourthChar as PANFourthChar];
     }
-    return { partyType: [], subPartyType: [], documents: [] };
+    return defaultPartyTypeMapping;
   }, [fourthChar]);
 
-  console.log("form", form.getValues());
+  const [districts, setDistricts] = useState<IDistrict[]>([]);
+  const [districtsLoading, setDistrictsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!selectedState) {
+      setDistricts([]);
+      form.setValue("district", "");
+      return;
+    }
+
+    const fetchDistricts = async () => {
+      try {
+        setDistrictsLoading(true);
+        const response = await api.get(`/get-state-district?state=${selectedState}`);
+        setDistricts(response?.data);
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+        setDistricts([]);
+      } finally {
+        setDistrictsLoading(false);
+      }
+    };
+
+    fetchDistricts();
+  }, [selectedState]);
 
   return (
     <Card>
@@ -74,7 +128,7 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {subPartyType.map((type) => (
+                  {(selectedPartyType === "Individual" && fourthChar === "" ? ["Select", "Farmer", "Individual", "Proprietorship"] : subPartyType).map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
                     </SelectItem>
@@ -87,27 +141,58 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
         />
 
         {/* Pin Number */}
-        <FormField
+        {/* <FormField
           control={form.control}
           name="pinNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Pin No.</FormLabel>
+              <FormLabel>Pincode</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Pin Code" {...field} />
+                <Input placeholder="Enter Pincode" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
+        <FormField
+          control={form.control}
+          name="pinNumber"
+          render={({ field }) => {
+            const selectedStateObj = STATE_PINCODE_OPTIONS.find((s) => s.value === Number(selectedState));
+
+            const min = selectedStateObj?.minPincode ?? 0;
+            const max = selectedStateObj?.maxPincode ?? 999999;
+
+            return (
+              <FormItem>
+                <FormLabel>Pincode</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder={`Enter Pincode`}
+                    {...field}
+                    min={min}
+                    max={max}
+                    onChange={(e) => {
+                      field.onChange(e);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
         {/* Name 1 */}
         <FormField
           control={form.control}
           name="name1"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name 1</FormLabel>
+              <FormLabel>
+                Name 1 {getFieldRequiredStatus(registerDepositorFormSchema, "prefferedLocationDetails.warehouseState") && <span className="text-red-500 ml-1">*</span>}
+              </FormLabel>
               <FormControl>
                 <Input placeholder="First Name" {...field} />
               </FormControl>
@@ -213,17 +298,16 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>State</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select State" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Maharashtra">Maharashtra</SelectItem>
-                  <SelectItem value="Karnataka">Karnataka</SelectItem>
-                  <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
-                  <SelectItem value="Delhi">Delhi</SelectItem>
+                  {STATE_PINCODE_OPTIONS?.map((stateObj: IStateObject) => {
+                    return <SelectItem value={`${stateObj?.value}`}>{stateObj?.label}</SelectItem>;
+                  })}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -238,9 +322,19 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>District</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter District" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={selectedState === ""}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={districtsLoading ? "Loading Districts" : "Select District"} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {districts &&
+                    districts?.map((stateObj: IDistrict) => {
+                      return <SelectItem value={`${stateObj?.id}`}>{stateObj?.long_desc}</SelectItem>;
+                    })}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

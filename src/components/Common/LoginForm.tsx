@@ -24,7 +24,6 @@ const LoginFormSection = () => {
   const onSubmit = (data: LoginFormValues) => {
     if (data?.userRole === "customer") navigate(ROUTES?.C_OVERVIEW);
     else navigate(ROUTES?.E_OVERVIEW);
-    console.log("Form Data: ", data);
   };
 
   return (

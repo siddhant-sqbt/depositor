@@ -182,7 +182,6 @@ export const columns: ColumnDef<ICustomerTable>[] = [
     header: "Action", // Optional: hides header for action buttons
     enableHiding: false,
     cell: ({ row }) => {
-      console.log("row", row);
       return (
         <div className="flex justify-end gap-2">
           <Button variant="outline" size="icon" title="Approve" className="bg-green-100 hover:bg-green-200 border-none text-green-700">

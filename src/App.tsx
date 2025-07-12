@@ -9,14 +9,17 @@ import { AppSidebar } from "./components/app-sidebar";
 import Header from "./components/Common/Header";
 import LoginPage from "./pages/Login";
 import CustomerOverview from "./pages/CustomerOverview";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   const location = useLocation();
   const isHidden = HIDE_SIDEBAR_ROUTES?.includes(location?.pathname);
   return (
     <>
+      <Toaster />
       <div className="min-h-screen w-[inherit] font-sans antialiased">
         <Header />
+
         <SidebarProvider>
           {!isHidden && <AppSidebar />}
           <Routes>

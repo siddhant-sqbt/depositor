@@ -14,3 +14,21 @@ export interface ICustomerTable {
   customerCode: string;
   phone: string;
 }
+
+export interface IValueLabel {
+  value: number;
+  label: string;
+}
+
+export interface IStateObject {
+  value: number;
+  label: string;
+  minPincode?: number;
+  maxPincode?: number;
+}
+
+export interface IDistrict {
+  id: number;
+  long_desc: string;
+  short_desc: string;
+}

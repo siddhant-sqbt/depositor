@@ -73,7 +73,13 @@ const BankDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues> 
                     <Input placeholder="IN" {...register(`bankDetails.${index}.country`)} />
                   </TableCell>
                   <TableCell className="text-center p-2">
-                    <Button variant="destructive" size="icon" onClick={() => removeBank(index)} className="h-8 w-8">
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => removeBank(index)}
+                      disabled={bankFields?.length === 1}
+                      className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed"
+                    >
                       <Trash className="h-4 w-4" />
                     </Button>
                   </TableCell>

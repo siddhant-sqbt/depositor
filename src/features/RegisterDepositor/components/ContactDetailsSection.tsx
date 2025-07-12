@@ -76,7 +76,13 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
                     />
                   </TableCell>
                   <TableCell className="text-center p-2">
-                    <Button variant="destructive" size="icon" onClick={() => removeContact(index)} className="h-8 w-8">
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => removeContact(index)}
+                      disabled={contactFields?.length === 1}
+                      className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed"
+                    >
                       <Trash className="h-4 w-4" />
                     </Button>
                   </TableCell>
