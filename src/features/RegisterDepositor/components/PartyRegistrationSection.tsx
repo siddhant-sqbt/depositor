@@ -3,11 +3,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { partyTypeMapping, type PANFourthChar } from "@/lib/constants";
 import type { DocumentFormValues } from "@/lib/types";
 import { CircleUserRound } from "lucide-react";
+import { useMemo } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
+  const panNumber = form.watch("panNumber") || "";
+  const fourthChar = panNumber.length >= 4 ? panNumber[3].toUpperCase() : "";
+
+  const { partyType = [], subPartyType = [] } = useMemo(() => {
+    form.setValue("partyType", "");
+    form.setValue("subPartyType", "");
+    if (fourthChar in partyTypeMapping) {
+      return partyTypeMapping[fourthChar as PANFourthChar];
+    }
+    return { partyType: [], subPartyType: [], documents: [] };
+  }, [fourthChar]);
+
+  console.log("form", form.getValues());
+
   return (
     <Card>
       <FormCardHeading
@@ -32,9 +48,11 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Individual">Individual</SelectItem>
-                  <SelectItem value="Company">Company</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  {partyType.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -56,8 +74,11 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Retail">Retail</SelectItem>
-                  <SelectItem value="Wholesale">Wholesale</SelectItem>
+                  {subPartyType.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />

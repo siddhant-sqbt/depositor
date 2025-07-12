@@ -2,6 +2,7 @@ import FormCardHeading from "@/components/Common/FormCardHeading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { DocumentFormValues } from "@/lib/types";
 import { Plus, Trash, User } from "lucide-react";
 import { useFieldArray, type UseFormReturn } from "react-hook-form";
@@ -33,25 +34,57 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
           </div>
         }
       />
-      <CardContent className="space-y-4">
-        {contactFields.map((item, index) => (
-          <div key={item.id} className="grid grid-cols-6 gap-4 items-center">
-            <Input placeholder="Contact No" {...register(`contactDetails.${index}.contactNo`)} />
-            <Input placeholder="Email" {...register(`contactDetails.${index}.email`)} />
-            <Input placeholder="Contact Person" {...register(`contactDetails.${index}.contactPerson`)} />
-            <input
-              type="radio"
-              name="primaryContact"
-              checked={watch(`contactDetails.${index}.isPrimary`)}
-              onChange={() => {
-                contactFields.forEach((_, i) => setValue(`contactDetails.${i}.isPrimary`, i === index));
-              }}
-            />
-            <Button variant="destructive" size="icon" onClick={() => removeContact(index)}>
-              <Trash />
-            </Button>
-          </div>
-        ))}
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Contact No</TableHead>
+              <TableHead className="w-[250px]">Email</TableHead>
+              <TableHead className="w-[200px]">Contact Person</TableHead>
+              <TableHead className="w-[100px] text-center">Primary</TableHead>
+              <TableHead className="w-[80px] text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {contactFields.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  No contact details added. Click the + button to add a contact.
+                </TableCell>
+              </TableRow>
+            ) : (
+              contactFields.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell className="p-2">
+                    <Input placeholder="Contact No" {...register(`contactDetails.${index}.contactNo`)} />
+                  </TableCell>
+                  <TableCell className="p-2">
+                    <Input placeholder="Email" {...register(`contactDetails.${index}.email`)} />
+                  </TableCell>
+                  <TableCell className="p-2">
+                    <Input placeholder="Contact Person" {...register(`contactDetails.${index}.contactPerson`)} />
+                  </TableCell>
+                  <TableCell className="text-center p-2">
+                    <input
+                      type="radio"
+                      name="primaryContact"
+                      checked={watch(`contactDetails.${index}.isPrimary`)}
+                      onChange={() => {
+                        contactFields.forEach((_, i) => setValue(`contactDetails.${i}.isPrimary`, i === index));
+                      }}
+                      className="w-4 h-4"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center p-2">
+                    <Button variant="destructive" size="icon" onClick={() => removeContact(index)} className="h-8 w-8">
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );

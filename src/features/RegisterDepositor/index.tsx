@@ -18,7 +18,7 @@ const RegisterDepositorForm = () => {
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(registerDepositorFormSchema),
     defaultValues: {
-      panAvailable: "No",
+      panAvailable: "Yes",
       panNumber: "",
       tanNumber: "",
       gstNumber: "",
