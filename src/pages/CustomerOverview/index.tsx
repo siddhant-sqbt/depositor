@@ -1,5 +1,4 @@
 import { DataTableDemo } from "@/components/Common/CustomerTable";
-import React from "react";
 
 const CustomerOverview = () => {
   return (
