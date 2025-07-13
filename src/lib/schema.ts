@@ -11,14 +11,14 @@ export const registerDepositorFormSchema = z
     partyType: z.string().min(1, "Party Type is required"),
     subPartyType: z.string().min(1, "Sub Party Type is required"),
     pinNumber: z.string().optional(),
-    name1: z.string().max(40),
+    name1: z.string().max(40).optional(),
     name2: z.string().max(35).optional(),
     name3: z.string().max(80).optional(),
-    address1: z.string().min(1, "Address Line 1 is required"),
+    address1: z.string().optional(),
     address2: z.string().optional(),
     address3: z.string().optional(),
     city: z.string().optional(),
-    state: z.string().min(1, "State is required"),
+    state: z.string().min(1, "State is required").optional(),
     district: z.string().optional(),
 
     isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
@@ -37,9 +37,9 @@ export const registerDepositorFormSchema = z
     }),
 
     prefferedLocationDetails: z.object({
-      warehouseState: z.string().min(1, "Contact No is required"),
-      warehouseName: z.string().min(1, "Warehouse Name is required"),
-      customerBranchName: z.string().min(1, "Customer Branch is required"),
+      warehouseState: z.string().optional(),
+      warehouseName: z.string().optional(),
+      customerBranchName: z.string().optional(),
     }),
 
     contactDetails: z.array(

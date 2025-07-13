@@ -10,7 +10,7 @@ import { getFieldRequiredStatus } from "@/lib/utils";
 import { CircleUserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import api from "@/lib/axios";
+import api from "@/lib/apis/axiosInstance";
 
 const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panNumber = form.watch("panNumber") || "";
@@ -19,13 +19,10 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
   const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
 
   useEffect(() => {
-    console.log("triggered: ", stateCode);
     if (stateCode) {
       form.setValue("state", stateCode.toString());
     }
   }, [stateCode]);
-
-  console.log("form", form.getValues());
 
   const selectedPartyType = form.watch("partyType") || "";
   const fourthChar = panNumber.length >= 4 ? panNumber[3].toUpperCase() : "";
@@ -121,7 +118,7 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>Sub Party Type *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Sub Party Type" />
@@ -159,10 +156,12 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           control={form.control}
           name="pinNumber"
           render={({ field }) => {
-            const selectedStateObj = STATE_PINCODE_OPTIONS.find((s) => s.value === Number(selectedState));
+            // const selectedStateObj = STATE_PINCODE_OPTIONS.find((s) => s.value === Number(selectedState));
 
-            const min = selectedStateObj?.minPincode ?? 0;
-            const max = selectedStateObj?.maxPincode ?? 999999;
+            // const min = selectedStateObj?.minPincode ?? 0;
+            // const max = selectedStateObj?.maxPincode ?? 999999;
+            const min = 0;
+            const max = 999999;
 
             return (
               <FormItem>
@@ -298,15 +297,19 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>State</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={gstNumber?.length >= 2}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select State" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {STATE_PINCODE_OPTIONS?.map((stateObj: IStateObject) => {
-                    return <SelectItem value={`${stateObj?.value}`}>{stateObj?.label}</SelectItem>;
+                  {STATE_PINCODE_OPTIONS?.map((stateObj: IStateObject, index: number) => {
+                    return (
+                      <SelectItem value={`${stateObj?.value}`} key={index}>
+                        {stateObj?.label}
+                      </SelectItem>
+                    );
                   })}
                 </SelectContent>
               </Select>

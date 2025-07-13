@@ -32,3 +32,8 @@ export interface IDistrict {
   long_desc: string;
   short_desc: string;
 }
+
+export interface IRegisterDepositorFormProps {
+  viewOnly?: boolean;
+  reqNumber?: string; // unique id to fetch depositor
+}

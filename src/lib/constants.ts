@@ -6,6 +6,12 @@ export const ROUTES = {
   C_PENDING: "/approval-pending",
   LOGIN: "/login",
   E_OVERVIEW: "/e-overview",
+  VIEW: "/view",
+};
+
+export const API_ENDPOINTS = {
+  REGISTER_DEPOSITOR: "/save_mdm_data",
+  VIEW_DEPOSITOR: "/get_mdm_data",
 };
 
 export const HIDE_SIDEBAR_ROUTES = [ROUTES?.LOGIN];
@@ -31,19 +37,18 @@ export const partyTypeMapping: Record<
   }
 > = {
   P: {
-    partyType: ["Select", "Individual/Proprietorship"],
-    subPartyType: ["Select", "Farmer", "Individual", "Proprietorship"],
+    partyType: ["Individual/Proprietorship"],
+    subPartyType: ["Farmer", "Individual", "Proprietorship"],
     documents: ["PAN", "Aadhaar", "Voter ID"],
   },
   F: {
-    partyType: ["Select", "Partnership/Limited Liability Partnership (LLP)"],
-    subPartyType: ["Select", "Partnership/Limited Liability Partnership (LLP)"],
+    partyType: ["Partnership/Limited Liability Partnership (LLP)"],
+    subPartyType: ["Partnership/Limited Liability Partnership (LLP)"],
     documents: ["Copy of the Partnership Deed"],
   },
   C: {
-    partyType: ["Select", "Company/PSU"],
+    partyType: ["Company/PSU"],
     subPartyType: [
-      "Select",
       "Food Corporation of India (FCI)",
       "Cotton Corporation of India (CCI)",
       "State Civil Supply Corporation (SCSC)",
@@ -57,7 +62,7 @@ export const partyTypeMapping: Record<
   },
   G: {
     partyType: ["Govt Organization"],
-    subPartyType: ["Select", "Customs", "Railways", "Election Commission of India", "Other Central Government Parties", "Other State Government Parties"],
+    subPartyType: ["Customs", "Railways", "Election Commission of India", "Other Central Government Parties", "Other State Government Parties"],
     documents: ["Office ID Card of the Authorized Person", "PAN", "Aadhaar", "Voter ID"],
   },
   H: {
@@ -68,7 +73,6 @@ export const partyTypeMapping: Record<
   A: {
     partyType: ["Association of Persons (AOP)"],
     subPartyType: [
-      "Select",
       "NAFED",
       "NCCF",
       "CMSS",
@@ -385,3 +389,28 @@ export const STATE_34_PINCODE_RANGE = [
   [607000, 607999],
   [609000, 609999],
 ];
+
+export const REGISTER_DEFAULT_VALUES = {
+  panAvailable: "Yes",
+  panNumber: "",
+  tanNumber: "",
+  gstNumber: "",
+  aadhaarNumber: "",
+  optionalFeatures: {
+    forwarder: false,
+    consolid: false,
+    shippingLine: false,
+    transporter: false,
+    rent: false,
+    auction: false,
+  },
+  isExporterImporter: "No",
+  isCHA: "No",
+  prefferedLocationDetails: {
+    warehouseState: "",
+    customerBranchName: "",
+    warehouseName: "",
+  },
+  contactDetails: [{ contactNo: "234234234", email: "t@t.com", contactPerson: "Test", isPrimary: true }],
+  bankDetails: [{ bankName: "asdfa", accountHolderName: "asdfgfds", ifscCode: "12341", accountNo: "123432", country: "IN" }],
+};

@@ -10,12 +10,18 @@ import Header from "./components/Common/Header";
 import LoginPage from "./pages/Login";
 import CustomerOverview from "./pages/CustomerOverview";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import ViewRegisterDepositor from "./pages/ViewRegisterDepositor";
+
+const queryClient = new QueryClient();
 
 function App() {
   const location = useLocation();
   const isHidden = HIDE_SIDEBAR_ROUTES?.includes(location?.pathname);
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools />
       <Toaster />
       <div className="min-h-screen w-[inherit] font-sans antialiased">
         <Header />
@@ -27,12 +33,13 @@ function App() {
             <Route path={ROUTES?.C_OVERVIEW} element={<CustomerOverview />} />
             <Route path={ROUTES?.C_PENDING} element={<CustomerOverview />} />
             <Route path={ROUTES?.C_REGISTER_DEPOSITOR} element={<RegisterDepositorPage />} />
+            <Route path={`${ROUTES?.VIEW}/:id`} element={<ViewRegisterDepositor />} />
 
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
         </SidebarProvider>
       </div>
-    </>
+    </QueryClientProvider>
   );
 }
 
