@@ -100,7 +100,9 @@ export const registerDepositorFormSchema = z
         H: { panRequired: true, gstRequired: false, tanRequired: false }, // Others
       };
 
-      const rule = validationRules[pan4thDigit];
+      type PanFourthChar = keyof typeof validationRules;
+
+      const rule = validationRules[pan4thDigit as PanFourthChar];
 
       // If no specific rule found, use default validation
       if (!rule) {
@@ -126,7 +128,6 @@ export const registerDepositorFormSchema = z
   )
   .refine(
     (data) => {
-      // Custom error messages for GST
       if (data.panAvailable === "Yes" && data.panNumber && data.panNumber.length >= 4) {
         const pan4thDigit = data.panNumber[3].toUpperCase();
         const gstRequiredTypes = ["C", "A", "B", "T", "L", "J"];
@@ -164,10 +165,12 @@ export const registerDepositorFormSchema = z
 // Helper function to get field requirements based on PAN
 export const getFieldRequirements = (panNumber: string) => {
   if (!panNumber || panNumber.length < 4) {
-    return { panRequired: false, gstRequired: false, tanRequired: false };
+    return { panRequired: false, gstRequired: false, tanRequired: false, aadharRequired: false, aadharDisabled: false };
   }
 
   const pan4thDigit = panNumber[3].toUpperCase();
+
+  type PanFourthChar = keyof typeof rules;
 
   const rules = {
     P: { panRequired: true, gstRequired: false, tanRequired: false, aadharRequired: true, aadharDisabled: false }, // ZIND
@@ -182,7 +185,7 @@ export const getFieldRequirements = (panNumber: string) => {
     H: { panRequired: true, gstRequired: false, tanRequired: false, aadharRequired: false, aadharDisabled: true }, // Others
   };
 
-  return rules[pan4thDigit] || { panRequired: false, gstRequired: false, tanRequired: false };
+  return rules[pan4thDigit as PanFourthChar] || { panRequired: false, gstRequired: false, tanRequired: false, aadharRequired: false, aadharDisabled: false };
 };
 
 export const loginSchema = z.object({

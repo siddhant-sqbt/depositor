@@ -114,7 +114,7 @@ const RegisterDepositorForm = () => {
           <OptionalFeaturesSection form={form} />
           <ContactDetailsSection form={form} />
           <BankDetailsSection form={form} />
-          <DocumentUploadTable form={form} />
+          <DocumentUploadTable />
         </div>
 
         <Button type="submit">Submit</Button>

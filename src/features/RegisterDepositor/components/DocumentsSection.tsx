@@ -1,4 +1,4 @@
-import { useFormContext, type UseFormReturn } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -17,12 +17,11 @@ const DOCUMENTS_LIST = [
   { key: "other", label: "Other", required: false },
 ] as const;
 
-export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
+export const DocumentUploadTable = () => {
   const {
     register,
     watch,
     formState: { errors },
-    getValues,
   } = useFormContext<DocumentFormValues>();
 
   const watchedFiles = watch("documents");

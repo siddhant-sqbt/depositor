@@ -1,7 +1,6 @@
 import { loginSchema } from "@/lib/schema";
 import type { LoginFormValues } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
