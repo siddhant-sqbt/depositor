@@ -15,11 +15,21 @@ const postRegisterDepositor = async (data: DocumentFormValues) => {
 const getRegisterDepositorDetails = async (id: string) => {
   try {
     const response = await api.get(`${API_ENDPOINTS?.VIEW_DEPOSITOR}/${id}`);
-    return response?.data?.data;
+    return response?.data;
   } catch (error) {
     console.error("Error getting data: ", error);
     return Promise.reject(error);
   }
 };
 
-export { postRegisterDepositor, getRegisterDepositorDetails };
+const getTableList = async (action_type: string, action_for: string) => {
+  try {
+    const response = await api.get(`${API_ENDPOINTS?.LIST_DEPOSITOR}?action_type=${action_type}&action_for=${action_for}&page=1&limit=10`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting data: ", error);
+    return Promise.reject(error);
+  }
+};
+
+export { postRegisterDepositor, getRegisterDepositorDetails, getTableList };

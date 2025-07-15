@@ -4,10 +4,9 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import DocumentRegistration from "./components/DocumentRegistration";
-import type { DocumentFormValues, IRegisterDepositorFormProps } from "@/lib/types";
+import type { DocumentFormValues, IAPIErrorResponse, IRegisterDepositorFormProps } from "@/lib/types";
 import { registerDepositorFormSchema } from "@/lib/schema";
 
-import PartyRegistrationSection from "./components/PartyRegistrationSection";
 import ExporterImporterSection from "./components/ExporterImporterSection";
 import OptionalFeaturesSection from "./components/OptionalFeaturesSection";
 import ContactDetailsSection from "./components/ContactDetailsSection";
@@ -17,25 +16,31 @@ import { DocumentUploadTable } from "./components/DocumentsSection";
 import { getRegisterDepositorDetails, postRegisterDepositor } from "@/lib/apis/apis";
 
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, STATIC_MOBILE_NO, STATIC_PLANT_NO } from "@/lib/constants";
+import BasicDetailsSection from "./components/BasicDetailsSection";
+import type { BaseSyntheticEvent } from "react";
+import type { AxiosError } from "axios";
+
+// action_type (number), action_for (C or E)
 
 const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly, reqNumber }) => {
   const navigate = useNavigate();
-  // const { data: fetchedData, isLoading: isFetchingData } = useQuery({
-  //   queryKey: ["getDepositorDetails", reqNumber],
-  //   queryFn: () => reqNumber && getRegisterDepositorDetails(reqNumber),
-  //   enabled: viewOnly && !!reqNumber,
-  // });
+  const isEmployee = localStorage?.getItem("ROLE") === "E";
 
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(registerDepositorFormSchema),
     defaultValues: async () => {
       if (viewOnly && reqNumber) {
-        const data = await getRegisterDepositorDetails(reqNumber);
-        return data; // prefilled values from API
+        try {
+          const fetchedData = await getRegisterDepositorDetails(reqNumber);
+
+          return fetchedData?.data;
+        } catch (err) {
+          toast.error(JSON.stringify(err));
+          return {};
+        }
       } else {
         return {
           panAvailable: "Yes",
@@ -64,15 +69,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
       }
     },
   });
-
-  // console.log("values 12: ", form.getValues()?.["address1"], form.getValues()?.["panNumber"]);
-
-  // useEffect(() => {
-  //   if (viewOnly && reqNumber && fetchedData) {
-  //     // console.log("fetchedData", fetchedData);
-  //     form.reset(fetchedData);
-  //   }
-  // }, [viewOnly, reqNumber, fetchedData, form]);
 
   // const selectedState = form.watch("state") || "";
 
@@ -129,30 +125,24 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   const { mutate: mutateRegisterDepositor, isPending } = useMutation({
     mutationFn: (data: DocumentFormValues) => postRegisterDepositor(data),
     onSuccess: (res) => {
-      console.log("res", res);
-      toast(`Depositor registered successfully! ${res?.req_number}`);
+      toast.success(`Depositor registered successfully! ${res?.req_number}`);
       navigate(ROUTES?.C_OVERVIEW);
     },
-    onError: () => {
-      toast("Failed to register depositor");
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
     },
   });
 
-  useEffect(() => {
-    console.log("isLoading: ", isPending);
-  }, [isPending]);
+  const onSubmit = async (data: DocumentFormValues, event?: BaseSyntheticEvent) => {
+    const nativeEvent = event?.nativeEvent as SubmitEvent | undefined;
+    const action = nativeEvent?.submitter instanceof HTMLElement ? nativeEvent.submitter.getAttribute("value") : undefined;
 
-  // if (viewOnly) {
-  //   return <div>Loading depositor details...</div>;
-  // }
+    const payloadData = { ...data, action_for: isEmployee ? "E" : "C", action_type: action === "draft" ? "5" : "10", mobile: STATIC_MOBILE_NO, plant: STATIC_PLANT_NO };
 
-  const onSubmit = async (data: DocumentFormValues) => {
-    console.log("form submitted data: ", data);
     // validatePincode(data);
     // validateDocuments(data);
     try {
-      const response = mutateRegisterDepositor(data);
-      console.log("response: ", response);
+      mutateRegisterDepositor(payloadData);
     } catch (error) {
       console.error("Error fetching districts:", error);
     }
@@ -164,23 +154,31 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto p-4 w-[inherit]">
-        <div>
-          <h1 className="text-3xl text-center font-semibold mb-4">New Depositor Registration</h1>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto w-[inherit]">
+        <div className="p-4">
+          <div>
+            <h1 className="text-3xl text-center font-semibold mb-4">New Depositor Registration</h1>
+          </div>
+          <Separator className="mb-4" />
+          <div className="flex flex-col gap-4">
+            <DocumentRegistration form={form} />
+            <BasicDetailsSection form={form} />
+            <PrefferedLocationSection form={form} />
+            <ExporterImporterSection form={form} />
+            <OptionalFeaturesSection form={form} />
+            <ContactDetailsSection form={form} />
+            <BankDetailsSection form={form} />
+            <DocumentUploadTable />
+          </div>
         </div>
-        <Separator className="mb-4" />
-        <div className="flex flex-col gap-4">
-          <DocumentRegistration form={form} />
-          <PartyRegistrationSection form={form} />
-          <PrefferedLocationSection form={form} />
-          <ExporterImporterSection form={form} />
-          <OptionalFeaturesSection form={form} />
-          <ContactDetailsSection form={form} />
-          <BankDetailsSection form={form} />
-          <DocumentUploadTable />
+        <div className="shadow-sm p-4 border-t flex gap-2">
+          <Button type="submit" name="action" value="draft">
+            Save as Draft
+          </Button>
+          <Button type="submit" name="action" value="submit">
+            Submit
+          </Button>
         </div>
-
-        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );

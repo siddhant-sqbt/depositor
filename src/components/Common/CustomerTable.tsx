@@ -13,204 +13,250 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Check, Eye, X } from "lucide-react";
+import { Edit, Eye, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { ICustomerTable } from "@/lib/types";
+import type { ITableData } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
+import { getTableList } from "@/lib/apis/apis";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
-const data: ICustomerTable[] = [
-  {
-    id: 20,
-    customerCode: "sdfd",
-    phone: "8600028290",
-    companyName: "RB Indian Oil Rajasthan Chd",
-    entityType: "Partnership/Limited Liability Partnership (LLP)",
-    email: "rahulgrg58@gmail.com",
-    applicationDate: "13-05-2025",
-    status: "pending",
-  },
-  {
-    id: 21,
-    customerCode: "27AAECR1234A1Z9",
-    phone: "9876543210",
-    companyName: "Sharma Logistics Pvt Ltd",
-    entityType: "Private Limited Company",
-    email: "contact@sharmalogistics.in",
-    applicationDate: "10-04-2025",
-    status: "approved",
-  },
-  {
-    id: 22,
-    customerCode: "27AAECR1234A1Z9",
-    phone: "9123456789",
-    companyName: "Green Earth Traders",
-    entityType: "Sole Proprietorship",
-    email: "greenearth@gmail.com",
-    applicationDate: "22-06-2025",
-    status: "rejected",
-  },
-  {
-    id: 23,
-    customerCode: "08BBCCM5678L1Z2",
-    phone: "9988776655",
-    companyName: "Omkar Transport Solutions",
-    entityType: "Partnership",
-    email: "info@omkartransport.in",
-    applicationDate: "05-07-2025",
-    status: "pending",
-  },
-  {
-    id: 24,
-    customerCode: "09AABCU1234F1Z3",
-    phone: "9090909090",
-    companyName: "Rajdeep Industrial Suppliers",
-    entityType: "Public Limited Company",
-    email: "rajdeep@industries.com",
-    applicationDate: "01-03-2025",
-    status: "approved",
-  },
-  {
-    id: 25,
-    customerCode: "09AABCU5634F3Z3",
-    phone: "8001234567",
-    companyName: "North Star Maritime",
-    entityType: "Limited Liability Partnership (LLP)",
-    email: "northstar@maritime.in",
-    applicationDate: "18-02-2025",
-    status: "under review",
-  },
-];
+// /generate_otp mobile POST
+// validate_otp otp mob_number POST
 
-const getStatusColor = (status: string) => {
+// const data: ICustomerTable[] = [
+//   {
+//     id: 20,
+//     customerCode: "sdfd",
+//     phone: "8600028290",
+//     companyName: "RB Indian Oil Rajasthan Chd",
+//     entityType: "Partnership/Limited Liability Partnership (LLP)",
+//     email: "rahulgrg58@gmail.com",
+//     applicationDate: "13-05-2025",
+//     status: "pending",
+//   },
+//   {
+//     id: 21,
+//     customerCode: "27AAECR1234A1Z9",
+//     phone: "9876543210",
+//     companyName: "Sharma Logistics Pvt Ltd",
+//     entityType: "Private Limited Company",
+//     email: "contact@sharmalogistics.in",
+//     applicationDate: "10-04-2025",
+//     status: "approved",
+//   },
+//   {
+//     id: 22,
+//     customerCode: "27AAECR1234A1Z9",
+//     phone: "9123456789",
+//     companyName: "Green Earth Traders",
+//     entityType: "Sole Proprietorship",
+//     email: "greenearth@gmail.com",
+//     applicationDate: "22-06-2025",
+//     status: "rejected",
+//   },
+//   {
+//     id: 23,
+//     customerCode: "08BBCCM5678L1Z2",
+//     phone: "9988776655",
+//     companyName: "Omkar Transport Solutions",
+//     entityType: "Partnership",
+//     email: "info@omkartransport.in",
+//     applicationDate: "05-07-2025",
+//     status: "pending",
+//   },
+//   {
+//     id: 24,
+//     customerCode: "09AABCU1234F1Z3",
+//     phone: "9090909090",
+//     companyName: "Rajdeep Industrial Suppliers",
+//     entityType: "Public Limited Company",
+//     email: "rajdeep@industries.com",
+//     applicationDate: "01-03-2025",
+//     status: "approved",
+//   },
+//   {
+//     id: 25,
+//     customerCode: "09AABCU5634F3Z3",
+//     phone: "8001234567",
+//     companyName: "North Star Maritime",
+//     entityType: "Limited Liability Partnership (LLP)",
+//     email: "northstar@maritime.in",
+//     applicationDate: "18-02-2025",
+//     status: "under review",
+//   },
+// ];
+
+const getStatusColor = (status: "5" | "10" | "20" | "50") => {
   const colors = {
-    pending: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    "under review": "bg-blue-100 text-blue-800",
+    "5": "bg-yellow-100 text-yellow-800",
+    "10": "bg-green-100 text-green-800",
+    "20": "bg-green-100 text-green-800",
+    "50": "bg-green-100 text-green-800",
+    // rejected: "bg-red-100 text-red-800",
+    // "under review": "bg-blue-100 text-blue-800",
   };
-  return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  return colors[status] || "bg-gray-100 text-gray-800";
 };
 // eslint-disable-next-line react-refresh/only-export-components
-export const columns: ColumnDef<ICustomerTable>[] = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //     />
-  //   ),
-  //   cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "customerCode",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Customer Code
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("customerCode")}</div>,
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-    maxSize: 100,
-    cell: ({ row }) => <div className="capitalize">{row.getValue("phone")}</div>,
-  },
-  {
-    accessorKey: "companyName",
-    header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("companyName")}</div>,
-  },
-  {
-    accessorKey: "entityType",
-    header: "Party Type",
-    maxSize: 10,
-    cell: ({ row }) => <div className="capitalize">{row.getValue("entityType")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "applicationDate",
-    header: "Submission Date",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("applicationDate")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.getValue("status"))}`}>{row.getValue("status")}</span>
-    ),
-  },
-  // {
-  //   accessorKey: "remarks",
-  //   header: "Remarks",
-  //   cell: ({ row }) => <div className="capitalize">{row.getValue("remarks")}</div>,
-  // },
-  // {
-  //   accessorKey: "amount",
-  //   header: () => <div className="text-right">Amount</div>,
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("amount"));
+export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
+  const navigate = useNavigate();
+  const isEmployee = localStorage?.getItem("ROLE") === "E";
 
-  //     // Format the amount as a dollar amount
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "USD",
-  //     }).format(amount);
-
-  //     return <div className="text-right font-medium">{formatted}</div>;
-  //   },
-  // },
-  {
-    id: "actions",
-    header: "Action", // Optional: hides header for action buttons
-    enableHiding: false,
-    cell: () => {
-      return (
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" size="icon" title="Approve" className="bg-green-100 hover:bg-green-200 border-none text-green-700">
-            <Check className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon" title="Reject" className="bg-red-100 hover:bg-red-200 border-none text-red-900">
-            <X className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon" title="View" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-900">
-            <Eye className="h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
-    // meta: {
-    //   className: "sticky right-0 bg-white z-10", // for body cells
-    //   headerClassName: "sticky right-0 bg-white z-20", // for header
+  const columns: ColumnDef<ITableData>[] = [
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label="Select all"
+    //     />
+    //   ),
+    //   cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
+    //   enableSorting: false,
+    //   enableHiding: false,
     // },
-  },
-];
+    {
+      accessorKey: "req_number",
+      header: "ID",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("req_number") ?? "N/A"}</div>,
+    },
+    // {
+    //   accessorKey: "customerCode",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+    //         Customer Code
+    //         <ArrowUpDown />
+    //       </Button>
+    //     );
+    //   },
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("customerCode")}</div>,
+    // },
+    {
+      accessorKey: "mob_number",
+      header: "Phone",
+      maxSize: 100,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("mob_number") ?? "N/A"}</div>,
+    },
+    {
+      accessorKey: "party_type",
+      header: "Party Type",
+      maxSize: 100,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("party_type") ?? "N/A"}</div>,
+    },
+    {
+      accessorKey: "sub_party_type",
+      header: "Sub Party Type",
+      maxSize: 100,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("sub_party_type") ?? "N/A"}</div>,
+    },
+    {
+      accessorKey: "first_name",
+      header: "Name",
+      cell: ({ row }) => <div className="capitalize">{`${row.getValue("first_name") ?? ""} ${row.getValue("last_name") ?? ""}`}</div>,
+    },
 
-export function DataTableDemo() {
+    {
+      accessorKey: "created_on",
+      header: "Created Date",
+      cell: ({ row }) => <div>{row.getValue("created_on") ? moment(row.getValue("created_on")).format("DD MMM YYYY") : "N/A"}</div>,
+    },
+    {
+      accessorKey: "status_text",
+      header: "Status",
+      cell: ({ row }) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row?.original?.status)}`}>{row.getValue("status_text")}</span>
+      ),
+    },
+
+    // {
+    //   accessorKey: "remarks",
+    //   header: "Remarks",
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("remarks")}</div>,
+    // },
+    // {
+    //   accessorKey: "amount",
+    //   header: () => <div className="text-right">Amount</div>,
+    //   cell: ({ row }) => {
+    //     const amount = parseFloat(row.getValue("amount"));
+
+    //     // Format the amount as a dollar amount
+    //     const formatted = new Intl.NumberFormat("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     }).format(amount);
+
+    //     return <div className="text-right font-medium">{formatted}</div>;
+    //   },
+    // },
+    {
+      id: "actions",
+      header: "Action", // Optional: hides header for action buttons
+      enableHiding: false,
+      cell: ({ row }) => {
+        const isDraft = row?.original?.status === "5";
+        const handleViewClick = () => {
+          navigate(`${isEmployee ? ROUTES?.E_VIEW : ROUTES?.C_VIEW}/${row?.original?.req_number}`);
+        };
+        return (
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={handleViewClick} size="icon" title="View" className="bg-green-100 hover:bg-green-200 border-none text-green-900">
+              <Eye className="h-4 w-4" />
+            </Button>
+            {isEmployee ? (
+              <>
+                {/* <Button variant="outline" size="icon" title="Approve" className="bg-green-100 hover:bg-green-200 border-none text-green-700">
+                  <Check className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon" title="Reject" className="bg-red-100 hover:bg-red-200 border-none text-red-900">
+                  <X className="h-4 w-4" />
+                </Button> */}
+              </>
+            ) : (
+              <></>
+            )}
+            <>
+              {isDraft && (
+                <>
+                  <Button variant="outline" size="icon" title="Approve" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" title="Reject" className="bg-red-100 hover:bg-red-200 border-none text-red-900">
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </>
+          </div>
+        );
+      },
+      // meta: {
+      //   className: "sticky right-0 bg-white z-10", // for body cells
+      //   headerClassName: "sticky right-0 bg-white z-20", // for header
+      // },
+    },
+  ];
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const actionType = isPendingPage || isEmployee ? STATIC_EMP_NO : STATIC_MOBILE_NO;
+  const actionFor = isPendingPage ? "EP" : isEmployee ? "EO" : "CO";
+
+  const query = useQuery({
+    queryKey: ["customer-table", actionType, actionFor],
+    queryFn: () => getTableList(actionType, actionFor),
+  });
+
   const table = useReactTable({
-    data,
+    data: query?.data?.data ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

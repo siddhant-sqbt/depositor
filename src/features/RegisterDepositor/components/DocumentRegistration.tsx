@@ -6,7 +6,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getFieldRequirements } from "@/lib/schema";
 import type { DocumentFormValues } from "@/lib/types";
 import { File } from "lucide-react";
-import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
@@ -14,16 +13,33 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
   const panNumber = form.watch("panNumber");
   const requirements = getFieldRequirements(panNumber ?? "");
 
-  useEffect(() => {
+  const handlePanNumberChange = () => {
+    console.log("PAN Number onChange triggered");
+
     form.setValue("tanNumber", "");
     form.setValue("gstNumber", "");
     form.setValue("aadhaarNumber", "");
-  }, [panNumber]);
+    form.setValue("partyType", "");
+    form.setValue("subPartyType", "");
+  };
 
-  useEffect(() => {
+  const handlePanAvailableChange = () => {
+    console.log("PAN Checkbox onChange triggered");
     form.setValue("panNumber", "");
-  }, [panAvailable]);
+    form.setValue("tanNumber", "");
+    form.setValue("gstNumber", "");
+    form.setValue("aadhaarNumber", "");
+    form.setValue("partyType", "");
+    form.setValue("subPartyType", "");
+  };
 
+  const handleGstNumberChange = (gstNumber: string) => {
+    console.log("GST Number onChange triggered");
+    const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
+    if (stateCode) {
+      form.setValue("state", stateCode.toString());
+    }
+  };
   return (
     <Card>
       <FormCardHeading
@@ -42,7 +58,14 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             <FormItem className="mx-auto">
               <FormLabel>PAN Available</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                <RadioGroup
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    handlePanAvailableChange();
+                  }}
+                  defaultValue={field.value}
+                  className="flex gap-4"
+                >
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="Yes" />
@@ -70,7 +93,15 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
               <FormItem>
                 <FormLabel>PAN Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter PAN Number" disabled={panAvailable !== "Yes"} {...field} />
+                  <Input
+                    placeholder="Enter PAN Number"
+                    disabled={panAvailable !== "Yes"}
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handlePanNumberChange();
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -122,6 +153,10 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                       placeholder={isRequired ? "Enter GST Number (Required)" : "Enter GST Number (Optional)"}
                       className={`${hasError ? "border-red-500 focus:border-red-500" : ""}`}
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleGstNumberChange(e.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

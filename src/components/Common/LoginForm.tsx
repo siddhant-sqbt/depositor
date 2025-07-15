@@ -21,8 +21,13 @@ const LoginFormSection = () => {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    if (data?.userRole === "customer") navigate(ROUTES?.C_OVERVIEW);
-    else navigate(ROUTES?.E_OVERVIEW);
+    if (data?.userRole === "customer") {
+      localStorage.setItem("ROLE", "C");
+      navigate(ROUTES?.C_OVERVIEW);
+    } else {
+      localStorage.setItem("ROLE", "E");
+      navigate(ROUTES?.E_OVERVIEW);
+    }
   };
 
   return (

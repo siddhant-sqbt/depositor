@@ -4,16 +4,16 @@ import type { loginSchema, registerDepositorFormSchema } from "./schema";
 export type DocumentFormValues = z.infer<typeof registerDepositorFormSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
-export interface ICustomerTable {
-  id: number;
-  companyName: string;
-  entityType: string;
-  email: string;
-  applicationDate: string;
-  status: string;
-  customerCode: string;
-  phone: string;
-}
+// export interface ICustomerTable {
+//   id: number;
+//   companyName: string;
+//   entityType: string;
+//   email: string;
+//   applicationDate: string;
+//   status: string;
+//   customerCode: string;
+//   phone: string;
+// }
 
 export interface IValueLabel {
   value: number;
@@ -36,4 +36,21 @@ export interface IDistrict {
 export interface IRegisterDepositorFormProps {
   viewOnly?: boolean;
   reqNumber?: string; // unique id to fetch depositor
+}
+
+export interface ITableData {
+  created_on: string;
+  first_name: string;
+  last_name: string;
+  mob_number: string;
+  pending_with: string;
+  req_number: string;
+  status: "5" | "10" | "20" | "50";
+  status_text: string;
+  party_type: string;
+  sub_party_type: string;
+}
+
+export interface IAPIErrorResponse {
+  message: string;
 }

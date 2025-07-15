@@ -1,18 +1,25 @@
 import type { IStateObject, IValueLabel } from "./types";
 
 export const ROUTES = {
-  C_OVERVIEW: "/overview",
-  C_REGISTER_DEPOSITOR: "/register-depositor",
-  C_PENDING: "/approval-pending",
+  C_OVERVIEW: "/c/overview",
+  C_REGISTER_DEPOSITOR: "/c/register-depositor",
+  C_VIEW: "/view",
+
+  E_OVERVIEW: "/e/overview",
+  E_REGISTER_DEPOSITOR: "/e/register-depositor",
+  E_VIEW: "/e/view",
+  E_PENDING: "/e/approval-pending",
+
   LOGIN: "/login",
-  E_OVERVIEW: "/e-overview",
-  VIEW: "/view",
 };
 
 export const API_ENDPOINTS = {
   REGISTER_DEPOSITOR: "/save_mdm_data",
   VIEW_DEPOSITOR: "/get_mdm_data",
+  LIST_DEPOSITOR: "/list_mdm_data",
 };
+
+// ist_mdm_data?action_type=9876543210&action_for=CO&page=1&limit=10
 
 export const HIDE_SIDEBAR_ROUTES = [ROUTES?.LOGIN];
 
@@ -413,4 +420,15 @@ export const REGISTER_DEFAULT_VALUES = {
   },
   contactDetails: [{ contactNo: "234234234", email: "t@t.com", contactPerson: "Test", isPrimary: true }],
   bankDetails: [{ bankName: "asdfa", accountHolderName: "asdfgfds", ifscCode: "12341", accountNo: "123432", country: "IN" }],
+};
+
+export const STATIC_MOBILE_NO = "9876543210";
+export const STATIC_EMP_NO = "200015";
+export const STATIC_PLANT_NO = "2900";
+
+export const STATUS_MATRIX = {
+  5: "Draft",
+  10: "Submitted",
+  20: "Customer Created",
+  50: "Reject",
 };

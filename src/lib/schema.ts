@@ -190,6 +190,6 @@ export const getFieldRequirements = (panNumber: string) => {
 
 export const loginSchema = z.object({
   userRole: z.enum(["customer", "employee"], { message: "Select User Role" }),
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().optional(),
+  password: z.string().optional(),
 });

@@ -1,17 +1,21 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/constants";
-import { Home, UserPlus } from "lucide-react";
+import { Home, ListTodo, LogOut, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function AppSidebar() {
-  const items = [
+  const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate(ROUTES?.LOGIN);
+  };
+
+  const customerItems = [
     {
       title: "Overview",
       url: ROUTES?.C_OVERVIEW,
-      icon: Home,
-    },
-    {
-      title: "Pending",
-      url: ROUTES?.C_PENDING,
       icon: Home,
     },
     {
@@ -19,52 +23,59 @@ export function AppSidebar() {
       url: ROUTES?.C_REGISTER_DEPOSITOR,
       icon: UserPlus,
     },
-    // {
-    //   title: "Profile",
-    //   url: ROUTES?.PROFILE,
-    //   icon: Inbox,
-    // },
-    // {
-    //   title: "Annunity Form",
-    //   url: ROUTES?.ANNUNITY_FORM,
-    //   icon: Inbox,
-    // },
-    // {
-    //   title: "Form 4",
-    //   url: ROUTES?.FORM4,
-    //   icon: Inbox,
-    // },
-    // {
-    //   title: "Form 41",
-    //   url: ROUTES?.FORM41,
-    //   icon: Inbox,
-    // },
-    // {
-    //   title: "NEFT",
-    //   url: ROUTES?.NEFT,
-    //   icon: Inbox,
-    // },
-    // {
-    //   title: "Form 6A",
-    //   url: ROUTES?.FORM6A,
-    //   icon: Inbox,
-    // },
+    {
+      title: "Logout",
+      url: ROUTES?.LOGIN,
+      onClick: handleLogout,
+      icon: LogOut,
+    },
+  ];
+
+  const employeeItems = [
+    {
+      title: "Pending",
+      url: ROUTES?.E_PENDING,
+      icon: ListTodo,
+    },
+    {
+      title: "Overview",
+      url: ROUTES?.E_OVERVIEW,
+      icon: Home,
+    },
+    {
+      title: "Register Depositor",
+      url: ROUTES?.E_REGISTER_DEPOSITOR,
+      icon: UserPlus,
+    },
+    {
+      title: "Logout",
+      url: ROUTES?.LOGIN,
+      onClick: handleLogout,
+      icon: LogOut,
+    },
   ];
 
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup className="pt-sidebar">
-          <SidebarGroupLabel>Depositor</SidebarGroupLabel>
+          <SidebarGroupLabel>{isEmployee ? "Employee" : "Customer"}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {(isEmployee ? employeeItems : customerItems).map((item) => (
+                <SidebarMenuItem key={item?.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
+                    {item?.onClick ? (
+                      <button onClick={item.onClick} className="flex items-center gap-2 cursor-pointer">
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </button>
+                    ) : (
+                      <a href={item?.url} className="flex items-center gap-2">
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

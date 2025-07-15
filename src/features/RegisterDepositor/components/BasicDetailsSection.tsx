@@ -12,37 +12,16 @@ import { useEffect, useMemo, useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import api from "@/lib/apis/axiosInstance";
 
-const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
+const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panNumber = form.watch("panNumber") || "";
   const selectedState = form.watch("state") || "";
   const gstNumber = form.watch("gstNumber") || "";
-  const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
-
-  useEffect(() => {
-    if (stateCode) {
-      form.setValue("state", stateCode.toString());
-    }
-  }, [stateCode]);
+  // const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
 
   const selectedPartyType = form.watch("partyType") || "";
   const fourthChar = panNumber.length >= 4 ? panNumber[3].toUpperCase() : "";
 
-  useEffect(() => {
-    form.setValue("district", "");
-  }, [selectedState]);
-
-  useEffect(() => {
-    form.setValue("subPartyType", "");
-  }, [selectedPartyType]);
-
-  useEffect(() => {
-    form.setValue("partyType", "");
-    form.setValue("subPartyType", "");
-  }, [panNumber]);
-
   const { partyType = [], subPartyType = [] } = useMemo(() => {
-    form.setValue("partyType", "");
-    form.setValue("subPartyType", "");
     if (fourthChar in partyTypeMapping) {
       return partyTypeMapping[fourthChar as PANFourthChar];
     }
@@ -52,10 +31,19 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
   const [districts, setDistricts] = useState<IDistrict[]>([]);
   const [districtsLoading, setDistrictsLoading] = useState<boolean>(false);
 
+  const handlePartyTypeChange = () => {
+    console.log("Party Type onChange triggered");
+    form.setValue("subPartyType", "");
+  };
+
+  const handleStateChange = () => {
+    console.log("District onChange triggered");
+    form.setValue("district", "");
+  };
+
   useEffect(() => {
     if (!selectedState) {
       setDistricts([]);
-      form.setValue("district", "");
       return;
     }
 
@@ -92,7 +80,13 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>Party Type *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handlePartyTypeChange();
+                }}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select" />
@@ -297,7 +291,14 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           render={({ field }) => (
             <FormItem>
               <FormLabel>State</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value} disabled={gstNumber?.length >= 2}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleStateChange();
+                }}
+                value={field.value}
+                disabled={gstNumber?.length >= 2}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select State" />
@@ -347,4 +348,4 @@ const PartyRegistrationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
   );
 };
 
-export default PartyRegistrationSection;
+export default BasicDetailsSection;

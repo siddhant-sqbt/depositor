@@ -1,13 +1,13 @@
 import { CustomerTable } from "@/components/Common/CustomerTable";
 
-const OverviewPage = () => {
+const EmpPendingPage = () => {
   return (
     <>
       <div className="p-4 w-[inherit] overflow-auto">
-        <CustomerTable />
+        <CustomerTable isPendingPage />
       </div>
     </>
   );
 };
 
-export default OverviewPage;
+export default EmpPendingPage;
