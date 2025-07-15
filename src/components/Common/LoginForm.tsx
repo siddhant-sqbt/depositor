@@ -44,7 +44,7 @@ const LoginFormSection = () => {
             <>
               <FormLabel>User Role</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4">
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="customer" />

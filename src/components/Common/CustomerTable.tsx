@@ -158,7 +158,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
     {
       accessorKey: "first_name",
       header: "Name",
-      cell: ({ row }) => <div className="capitalize">{`${row.getValue("first_name") ?? ""} ${row.getValue("last_name") ?? ""}`}</div>,
+      cell: ({ row }) => <div className="capitalize">{`${row.getValue("first_name") ?? ""} ${row?.original?.last_name ?? ""}`}</div>,
     },
 
     {

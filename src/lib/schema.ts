@@ -2,7 +2,7 @@ import z from "zod";
 
 export const registerDepositorFormSchema = z
   .object({
-    panAvailable: z.enum(["Yes", "No"], { message: "Select PAN availability" }),
+    panAvailable: z.enum(["yes", "no"], { message: "Select PAN availability" }),
     panNumber: z.string().optional(),
     tanNumber: z.string().optional(),
     gstNumber: z.string().optional(),
@@ -37,6 +37,7 @@ export const registerDepositorFormSchema = z
     }),
 
     prefferedLocationDetails: z.object({
+      warehouseType: z.string().optional(),
       warehouseState: z.string().optional(),
       warehouseName: z.string().optional(),
       customerBranchName: z.string().optional(),
@@ -74,7 +75,7 @@ export const registerDepositorFormSchema = z
   .refine(
     (data) => {
       // Skip validation if PAN is not available
-      if (data.panAvailable === "No") {
+      if (data.panAvailable === "no") {
         return true;
       }
 
@@ -128,7 +129,7 @@ export const registerDepositorFormSchema = z
   )
   .refine(
     (data) => {
-      if (data.panAvailable === "Yes" && data.panNumber && data.panNumber.length >= 4) {
+      if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
         const pan4thDigit = data.panNumber[3].toUpperCase();
         const gstRequiredTypes = ["C", "A", "B", "T", "L", "J"];
 
@@ -146,7 +147,7 @@ export const registerDepositorFormSchema = z
   .refine(
     (data) => {
       // Custom error messages for TAN
-      if (data.panAvailable === "Yes" && data.panNumber && data.panNumber.length >= 4) {
+      if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
         const pan4thDigit = data.panNumber[3].toUpperCase();
         const tanRequiredTypes = ["C", "A", "B", "T", "L", "J"];
 

@@ -63,18 +63,18 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                     field.onChange(value);
                     handlePanAvailableChange();
                   }}
-                  defaultValue={field.value}
+                  value={field.value}
                   className="flex gap-4"
                 >
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
-                      <RadioGroupItem value="Yes" />
+                      <RadioGroupItem value="yes" />
                     </FormControl>
                     <FormLabel className="font-normal">Yes</FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
-                      <RadioGroupItem value="No" />
+                      <RadioGroupItem value="no" />
                     </FormControl>
                     <FormLabel className="font-normal">No</FormLabel>
                   </FormItem>
@@ -95,7 +95,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                 <FormControl>
                   <Input
                     placeholder="Enter PAN Number"
-                    disabled={panAvailable !== "Yes"}
+                    disabled={panAvailable !== "yes"}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -113,7 +113,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             control={form.control}
             name="tanNumber"
             render={({ field, fieldState }) => {
-              const isRequired = panAvailable === "Yes" && requirements.tanRequired;
+              const isRequired = panAvailable === "yes" && requirements.tanRequired;
               const hasError = fieldState.error;
 
               return (
@@ -139,7 +139,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             control={form.control}
             name="gstNumber"
             render={({ field, fieldState }) => {
-              const isRequired = panAvailable === "Yes" && requirements.gstRequired;
+              const isRequired = panAvailable === "yes" && requirements.gstRequired;
               const hasError = fieldState.error;
 
               return (
@@ -171,7 +171,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             name="aadhaarNumber"
             render={({ field, fieldState }) => {
               const isDisabled = requirements?.aadharDisabled;
-              const isRequired = panAvailable === "Yes" && requirements?.aadharRequired;
+              const isRequired = panAvailable === "yes" && requirements?.aadharRequired;
               const hasError = fieldState.error;
 
               if (isDisabled) {

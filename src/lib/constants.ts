@@ -17,6 +17,11 @@ export const API_ENDPOINTS = {
   REGISTER_DEPOSITOR: "/save_mdm_data",
   VIEW_DEPOSITOR: "/get_mdm_data",
   LIST_DEPOSITOR: "/list_mdm_data",
+  WAREHOUSE_STATES_LIST: "/get_ro_states",
+  WAREHOUSE_NAME_LIST: "/get_plant_details",
+  // CO_STATES_LIST: "/get_co_details",
+  // WO_STATES_LIST: "/get_warehouse_states",
+  // WO_NAMES_LIST: "/get_warehouse_names_by_state",
 };
 
 // ist_mdm_data?action_type=9876543210&action_for=CO&page=1&limit=10
@@ -432,3 +437,9 @@ export const STATUS_MATRIX = {
   20: "Customer Created",
   50: "Reject",
 };
+
+export const WAREHOUSE_TYPES = [
+  { value: "RO", label: "RO" },
+  { value: "CO", label: "CO" },
+  { value: "WO", label: "Warehouse" },
+];

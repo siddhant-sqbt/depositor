@@ -27,7 +27,7 @@ const ExporterImporterSection = ({ form }: { form: UseFormReturn<DocumentFormVal
             <FormItem>
               <FormLabel>Do you also want to register as Exporter/Importer</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4">
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="Yes" />
@@ -74,7 +74,7 @@ const ExporterImporterSection = ({ form }: { form: UseFormReturn<DocumentFormVal
             <FormItem>
               <FormLabel>Do you want to register as CHA</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4">
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="Yes" />

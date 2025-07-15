@@ -18,7 +18,7 @@ import { getRegisterDepositorDetails, postRegisterDepositor } from "@/lib/apis/a
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { ROUTES, STATIC_MOBILE_NO, STATIC_PLANT_NO } from "@/lib/constants";
+import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
 import BasicDetailsSection from "./components/BasicDetailsSection";
 import type { BaseSyntheticEvent } from "react";
 import type { AxiosError } from "axios";
@@ -43,7 +43,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
         }
       } else {
         return {
-          panAvailable: "Yes",
+          panAvailable: "yes",
           panNumber: "",
           tanNumber: "",
           gstNumber: "",
@@ -59,10 +59,12 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           isExporterImporter: "No",
           isCHA: "No",
           prefferedLocationDetails: {
+            warehouseType: "",
             warehouseState: "",
-            customerBranchName: "",
             warehouseName: "",
+            customerBranchName: "",
           },
+
           contactDetails: [{ contactNo: "234234234", email: "t@t.com", contactPerson: "Test", isPrimary: true }],
           bankDetails: [{ bankName: "asdfa", accountHolderName: "asdfgfds", ifscCode: "12341", accountNo: "123432", country: "IN" }],
         };
@@ -137,7 +139,15 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     const nativeEvent = event?.nativeEvent as SubmitEvent | undefined;
     const action = nativeEvent?.submitter instanceof HTMLElement ? nativeEvent.submitter.getAttribute("value") : undefined;
 
-    const payloadData = { ...data, action_for: isEmployee ? "E" : "C", action_type: action === "draft" ? "5" : "10", mobile: STATIC_MOBILE_NO, plant: STATIC_PLANT_NO };
+    const payloadData = {
+      ...data,
+      action_for: isEmployee ? "E" : "C",
+      action_type: action === "draft" ? "5" : "10",
+      mob_number: STATIC_MOBILE_NO,
+      plant: data?.prefferedLocationDetails?.warehouseName,
+      pending_with: STATIC_EMP_NO,
+      pernr: STATIC_EMP_NO,
+    };
 
     // validatePincode(data);
     // validateDocuments(data);

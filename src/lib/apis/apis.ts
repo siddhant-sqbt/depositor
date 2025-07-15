@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from "../constants";
-import type { DocumentFormValues } from "../types";
+import type { DocumentFormValues, IWarehouseNameOption } from "../types";
 import api from "./axiosInstance";
 
 const postRegisterDepositor = async (data: DocumentFormValues) => {
@@ -32,4 +32,24 @@ const getTableList = async (action_type: string, action_for: string) => {
   }
 };
 
-export { postRegisterDepositor, getRegisterDepositorDetails, getTableList };
+const getStatesList = async (type: string): Promise<{ states: string[] }> => {
+  try {
+    const response = await api.get<{ states: string[] }>(`${API_ENDPOINTS?.WAREHOUSE_STATES_LIST}?state_inp=${type}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting data: ", error);
+    return Promise.reject(error);
+  }
+};
+
+const getStateWiseNameList = async (type: string, state: string): Promise<{ data: IWarehouseNameOption[] }> => {
+  try {
+    const response = await api.get<{ data: IWarehouseNameOption[] }>(`${API_ENDPOINTS?.WAREHOUSE_NAME_LIST}?state_inp=${type}&state=${state}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting data: ", error);
+    return Promise.reject(error);
+  }
+};
+
+export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList };

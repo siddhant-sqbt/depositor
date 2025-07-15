@@ -20,6 +20,11 @@ export interface IValueLabel {
   label: string;
 }
 
+export interface IWarehouseLabel {
+  value: string;
+  label: string;
+}
+
 export interface IStateObject {
   value: number;
   label: string;
@@ -53,4 +58,9 @@ export interface ITableData {
 
 export interface IAPIErrorResponse {
   message: string;
+}
+
+export interface IWarehouseNameOption {
+  plant: string;
+  profit_center_description: string;
 }

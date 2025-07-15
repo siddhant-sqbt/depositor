@@ -113,7 +113,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
             <FormItem>
               <FormLabel>Sub Party Type *</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
+                <FormControl className="w-full">
                   <SelectTrigger>
                     <SelectValue placeholder="Select Sub Party Type" />
                   </SelectTrigger>
@@ -299,7 +299,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
                 value={field.value}
                 disabled={gstNumber?.length >= 2}
               >
-                <FormControl>
+                <FormControl className="w-full">
                   <SelectTrigger>
                     <SelectValue placeholder="Select State" />
                   </SelectTrigger>
@@ -326,8 +326,8 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           render={({ field }) => (
             <FormItem>
               <FormLabel>District</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={selectedState === ""}>
-                <FormControl>
+              <Select onValueChange={field.onChange} value={field.value} disabled={selectedState === ""}>
+                <FormControl className="w-full">
                   <SelectTrigger>
                     <SelectValue placeholder={districtsLoading ? "Loading Districts" : "Select District"} />
                   </SelectTrigger>
