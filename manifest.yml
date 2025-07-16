@@ -1,0 +1,10 @@
+applications:
+  - name: mdm-depositor
+    path: dist
+    memory: 1024M
+    buildpacks:
+      - https://github.com/cloudfoundry/staticfile-buildpack.git
+    env:
+      NODE_ENV: production
+    routes:
+      - route: mdm-depositor.cfapps.ap10.hana.ondemand.com

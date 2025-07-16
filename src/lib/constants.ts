@@ -3,7 +3,7 @@ import type { IStateObject, IValueLabel } from "./types";
 export const ROUTES = {
   C_OVERVIEW: "/c/overview",
   C_REGISTER_DEPOSITOR: "/c/register-depositor",
-  C_VIEW: "/view",
+  C_VIEW: "/c/view",
 
   E_OVERVIEW: "/e/overview",
   E_REGISTER_DEPOSITOR: "/e/register-depositor",
