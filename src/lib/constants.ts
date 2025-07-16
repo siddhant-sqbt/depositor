@@ -19,6 +19,8 @@ export const API_ENDPOINTS = {
   LIST_DEPOSITOR: "/list_mdm_data",
   WAREHOUSE_STATES_LIST: "/get_ro_states",
   WAREHOUSE_NAME_LIST: "/get_plant_details",
+  APPROVE_FORM: "/approve_mdm_data",
+  REJECT_FORM: "/reject_mdm_data",
   // CO_STATES_LIST: "/get_co_details",
   // WO_STATES_LIST: "/get_warehouse_states",
   // WO_NAMES_LIST: "/get_warehouse_names_by_state",
@@ -55,7 +57,7 @@ export const partyTypeMapping: Record<
   },
   F: {
     partyType: ["Partnership/Limited Liability Partnership (LLP)"],
-    subPartyType: ["Partnership/Limited Liability Partnership (LLP)"],
+    subPartyType: ["Partnership", "Limited Liability Partnership (LLP)"],
     documents: ["Copy of the Partnership Deed"],
   },
   C: {
@@ -100,22 +102,22 @@ export const partyTypeMapping: Record<
   },
   B: {
     partyType: ["Body of Individual (BOI)"],
-    subPartyType: ["Select", "Other Central Govt. BOI", "Other State Govt. BOI", "Other Private BOI"],
+    subPartyType: ["Other Central Govt. BOI", "Other State Govt. BOI", "Other Private BOI"],
     documents: ["Office ID Card of the Authorized Person", "PAN", "Aadhaar", "GST", "TAN"],
   },
   T: {
     partyType: ["Trust"],
-    subPartyType: ["Select", "Other Central Govt. Trust", "Other State Govt. Trust", "Other Private Trust"],
+    subPartyType: ["Other Central Govt. Trust", "Other State Govt. Trust", "Other Private Trust"],
     documents: ["Office ID Card of the Authorized Person", "PAN", "Aadhaar", "GST", "TAN"],
   },
   L: {
     partyType: ["Local Authority"],
-    subPartyType: ["Select", "Other Central Govt. Local Authority", "Other State Govt. Local Authority"],
+    subPartyType: ["Other Central Govt. Local Authority", "Other State Govt. Local Authority"],
     documents: ["Office ID Card of the Authorized Person", "PAN", "Aadhaar", "GST", "TAN"],
   },
   J: {
     partyType: ["Artificial Judicial Person"],
-    subPartyType: ["Select", "Other Central Govt.", "Other State Govt.", "Other PRIVATE"],
+    subPartyType: ["Other Central Govt.", "Other State Govt.", "Other Private"],
     documents: ["Office ID Card of the Authorized Person", "PAN", "Aadhaar", "GST", "TAN"],
   },
 };

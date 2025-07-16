@@ -76,6 +76,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -107,6 +108,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   )}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -138,6 +140,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
                   )}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />

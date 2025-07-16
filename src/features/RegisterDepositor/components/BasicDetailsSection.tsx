@@ -8,17 +8,17 @@ import { registerDepositorFormSchema } from "@/lib/schema";
 import type { DocumentFormValues, IDistrict, IStateObject } from "@/lib/types";
 import { getFieldRequiredStatus } from "@/lib/utils";
 import { CircleUserRound } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import api from "@/lib/apis/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
+import { getDistricts } from "@/lib/apis/apis";
 
 const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panNumber = form.watch("panNumber") || "";
   const selectedState = form.watch("state") || "";
   const gstNumber = form.watch("gstNumber") || "";
-  // const stateCode = gstNumber?.length >= 2 ? Number(gstNumber?.substring(0, 2)) : "";
-
   const selectedPartyType = form.watch("partyType") || "";
+
   const fourthChar = panNumber.length >= 4 ? panNumber[3].toUpperCase() : "";
 
   const { partyType = [], subPartyType = [] } = useMemo(() => {
@@ -28,8 +28,11 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
     return defaultPartyTypeMapping;
   }, [fourthChar]);
 
-  const [districts, setDistricts] = useState<IDistrict[]>([]);
-  const [districtsLoading, setDistrictsLoading] = useState<boolean>(false);
+  const { data: districts, isLoading: districtsLoading } = useQuery({
+    queryKey: ["district", selectedState],
+    queryFn: () => getDistricts(selectedState),
+    enabled: !!selectedState,
+  });
 
   const handlePartyTypeChange = () => {
     console.log("Party Type onChange triggered");
@@ -40,28 +43,6 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
     console.log("District onChange triggered");
     form.setValue("district", "");
   };
-
-  useEffect(() => {
-    if (!selectedState) {
-      setDistricts([]);
-      return;
-    }
-
-    const fetchDistricts = async () => {
-      try {
-        setDistrictsLoading(true);
-        const response = await api.get(`/get-state-district?state=${selectedState}`);
-        setDistricts(response?.data);
-      } catch (error) {
-        console.error("Error fetching districts:", error);
-        setDistricts([]);
-      } finally {
-        setDistrictsLoading(false);
-      }
-    };
-
-    fetchDistricts();
-  }, [selectedState]);
 
   return (
     <Card>
@@ -87,7 +68,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
                 }}
                 value={field.value}
               >
-                <FormControl>
+                <FormControl className="w-full">
                   <SelectTrigger>
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>

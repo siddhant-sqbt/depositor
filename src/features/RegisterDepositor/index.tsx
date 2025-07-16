@@ -13,33 +13,38 @@ import ContactDetailsSection from "./components/ContactDetailsSection";
 import BankDetailsSection from "./components/BankDetailsSection";
 import PrefferedLocationSection from "./components/PrefferedLocationSection";
 import { DocumentUploadTable } from "./components/DocumentsSection";
-import { getRegisterDepositorDetails, postRegisterDepositor } from "@/lib/apis/apis";
+import { getRegisterDepositorDetails, postApproveForm, postRegisterDepositor, postRejectForm } from "@/lib/apis/apis";
 
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
 import BasicDetailsSection from "./components/BasicDetailsSection";
-import type { BaseSyntheticEvent } from "react";
+import { useState, type BaseSyntheticEvent } from "react";
 import type { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 
 // action_type (number), action_for (C or E)
 
 const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly, reqNumber }) => {
   const navigate = useNavigate();
   const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const [isLoading, setIsLoading] = useState<boolean>(!!viewOnly && !!reqNumber);
 
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(registerDepositorFormSchema),
     defaultValues: async () => {
       if (viewOnly && reqNumber) {
         try {
+          setIsLoading(true);
           const fetchedData = await getRegisterDepositorDetails(reqNumber);
 
           return fetchedData?.data;
         } catch (err) {
           toast.error(JSON.stringify(err));
           return {};
+        } finally {
+          setIsLoading(false);
         }
       } else {
         return {
@@ -71,6 +76,55 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
       }
     },
   });
+
+  const { mutate: mutateRegisterDepositor, isPending: isSubmitting } = useMutation({
+    mutationFn: (data: DocumentFormValues) => postRegisterDepositor(data),
+    onSuccess: (res) => {
+      toast.success(`Depositor registered successfully! ${res?.req_number}`);
+    },
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
+    },
+  });
+
+  const { mutate: mutateApproveForm, isPending: isApproveLoading } = useMutation({
+    mutationFn: () => postApproveForm(reqNumber as string),
+    onSuccess: (res) => {
+      toast.success(`Depositor approved successfully! ${res?.req_number}`);
+    },
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
+    },
+  });
+
+  const { mutate: mutateRejectForm, isPending: isRejectLoading } = useMutation({
+    mutationFn: () => postRejectForm(reqNumber as string),
+    onSuccess: (res) => {
+      toast.success(`Depositor approved successfully! ${res?.req_number}`);
+    },
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
+    },
+  });
+
+  const handleApproveClick = async () => {
+    try {
+      await mutateApproveForm();
+      navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
+    } catch (error) {
+      console.error("Unexpected error during approval:", error);
+    }
+  };
+
+  const handleRejectClick = async () => {
+    try {
+      await mutateRejectForm();
+      mutateRejectForm();
+      navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
+    } catch (error) {
+      console.error("Unexpected error during rejection:", error);
+    }
+  };
 
   // const selectedState = form.watch("state") || "";
 
@@ -124,17 +178,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   //   }
   // };
 
-  const { mutate: mutateRegisterDepositor, isPending } = useMutation({
-    mutationFn: (data: DocumentFormValues) => postRegisterDepositor(data),
-    onSuccess: (res) => {
-      toast.success(`Depositor registered successfully! ${res?.req_number}`);
-      navigate(ROUTES?.C_OVERVIEW);
-    },
-    onError: (err: AxiosError<IAPIErrorResponse>) => {
-      toast.error(err.response?.data?.message ?? "Failed to register depositor");
-    },
-  });
-
   const onSubmit = async (data: DocumentFormValues, event?: BaseSyntheticEvent) => {
     const nativeEvent = event?.nativeEvent as SubmitEvent | undefined;
     const action = nativeEvent?.submitter instanceof HTMLElement ? nativeEvent.submitter.getAttribute("value") : undefined;
@@ -152,14 +195,23 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     // validatePincode(data);
     // validateDocuments(data);
     try {
+      setIsLoading(true);
       mutateRegisterDepositor(payloadData);
+      navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
     } catch (error) {
       console.error("Error fetching districts:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (isPending) {
-    return <>LOADING</>;
+  if (isLoading || isSubmitting || isApproveLoading || isRejectLoading) {
+    return (
+      <div className="w-full flex justify-center items-center py-10">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <span className="ml-2 text-sm text-muted-foreground">Loading data...</span>
+      </div>
+    );
   }
 
   return (
@@ -182,12 +234,27 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           </div>
         </div>
         <div className="shadow-sm p-4 border-t flex gap-2">
-          <Button type="submit" name="action" value="draft">
-            Save as Draft
-          </Button>
-          <Button type="submit" name="action" value="submit">
-            Submit
-          </Button>
+          {viewOnly ? (
+            isEmployee && (
+              <>
+                <Button type="button" variant={"secondary"} onClick={handleApproveClick} className="bg-green-100 hover:bg-green-200 border-none text-green-900 cursor-pointer">
+                  Approve
+                </Button>
+                <Button type="button" variant={"secondary"} onClick={handleRejectClick} className="bg-red-100 hover:bg-red-200 border-none text-red-900 cursor-pointer">
+                  Reject
+                </Button>
+              </>
+            )
+          ) : (
+            <>
+              <Button type="submit" name="action" value="draft">
+                Save as Draft
+              </Button>
+              <Button type="submit" name="action" value="submit">
+                Submit
+              </Button>
+            </>
+          )}
         </div>
       </form>
     </Form>

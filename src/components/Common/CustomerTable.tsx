@@ -13,7 +13,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { Edit, Eye, Trash } from "lucide-react";
+import { Edit, Eye, Loader2, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -274,6 +274,15 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
     },
   });
 
+  if (query.isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center py-10">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <span className="ml-2 text-sm text-muted-foreground">Loading data...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       {/* <div className="flex items-center py-4">
@@ -326,7 +335,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {query.isLoading ? "Loading..." : "No results."}
                 </TableCell>
               </TableRow>
             )}

@@ -52,4 +52,33 @@ const getStateWiseNameList = async (type: string, state: string): Promise<{ data
   }
 };
 
-export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList };
+const getDistricts = async (selectedState: string) => {
+  try {
+    const response = await api.get(`/get-state-district?state=${selectedState}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error fetching districts:", error);
+  }
+};
+
+const postApproveForm = async (num: string) => {
+  try {
+    const response = await api.get(`${API_ENDPOINTS?.APPROVE_FORM}/${num}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error approving form: ", error);
+    return Promise.reject(error);
+  }
+};
+
+const postRejectForm = async (num: string) => {
+  try {
+    const response = await api.get(`${API_ENDPOINTS?.REJECT_FORM}/${num}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error rejecting form: ", error);
+    return Promise.reject(error);
+  }
+};
+
+export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList, getDistricts, postApproveForm, postRejectForm };

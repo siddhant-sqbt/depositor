@@ -37,9 +37,9 @@ export const registerDepositorFormSchema = z
     }),
 
     prefferedLocationDetails: z.object({
-      warehouseType: z.string().optional(),
-      warehouseState: z.string().optional(),
-      warehouseName: z.string().optional(),
+      warehouseType: z.string().min(1, "warehouse Type is required"),
+      warehouseState: z.string().min(1, "warehouse State is required"),
+      warehouseName: z.string().min(1, "warehouse Name is required"),
       customerBranchName: z.string().optional(),
     }),
 
