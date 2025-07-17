@@ -23,6 +23,9 @@ import BasicDetailsSection from "./components/BasicDetailsSection";
 import { useState, type BaseSyntheticEvent } from "react";
 import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
+import ServiceSecondarySection from "./components/ServiceSecondarySection";
+import RepresentativeSection from "./components/RepresentativeSection";
+// import RepresentativeSection from "./components/RepresentativeSection";
 
 // action_type (number), action_for (C or E)
 
@@ -47,6 +50,123 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           setIsLoading(false);
         }
       } else {
+        // return {
+        //   panAvailable: "yes",
+        //   panNumber: "AAADAAA",
+        //   tanNumber: "TAN121212",
+        //   gstNumber: "27AAACI1234J1ZV",
+        //   aadhaarNumber: "123412341234",
+        //   partyType: "Individual",
+        //   subPartyType: "Railways",
+        //   pinNumber: "999998",
+        //   name1: "Siddhant",
+        //   name2: "Name 2",
+        //   name3: "Name 3",
+        //   address1: "Test Address 1",
+        //   address2: "Test Address 2",
+        //   address3: "Test Address 3",
+        //   city: "City testing",
+        //   state: "27",
+        //   district: "1053",
+        //   isExporterImporter: "Yes",
+        //   iecNumber: "IEC1234567",
+        //   isCHA: "Yes",
+        //   chaLicenseNumber: "CHA testing",
+        //   optionalFeatures: {
+        //     forwarder: false,
+        //     consolid: true,
+        //     shippingLine: false,
+        //     transporter: true,
+        //     rent: false,
+        //     auction: true,
+        //   },
+        //   serviceSecondaryAddress: [
+        //     {
+        //       serviceBranchName: "Service Name 1",
+        //       serviceAddress1: "Add1 ",
+        //       serviceAddress2: "Add2",
+        //       serviceAddress3: "Add3",
+        //       serviceState: "",
+        //       serviceDistrict: "234234",
+        //       serviceCity: "City smart",
+        //       servicePincode: "2010101",
+        //     },
+        //   ],
+        //   representative: [
+        //     {
+        //       repName: "Sample Name",
+        //       repMobileNo: "234234234",
+        //       repEmail: "email@e.com",
+        //       repPosition: "Position 21",
+        //       repCreationDate: "",
+        //       repIsActivated: "",
+        //       repDeactivateDate: "",
+        //       repOtpVerified: "",
+        //     },
+        //     {
+        //       repName: "Sample REp 2",
+        //       repMobileNo: "2353469887",
+        //       repEmail: "email2@e.com",
+        //       repPosition: "Position 22",
+        //       repCreationDate: "",
+        //       repIsActivated: "",
+        //       repDeactivateDate: "",
+        //       repOtpVerified: "",
+        //     },
+        //   ],
+        //   prefferedLocationDetails: {
+        //     warehouseType: "RO",
+        //     warehouseState: "Tamil Nadu",
+        //     warehouseName: "2600",
+        //     customerBranchName: "",
+        //   },
+        //   contactDetails: [
+        //     {
+        //       contactNo: "234234234",
+        //       email: "t@t.com",
+        //       contactPerson: "Test",
+        //       isPrimary: false,
+        //     },
+        //     {
+        //       contactNo: "9123456780",
+        //       email: "contact2@example.com",
+        //       contactPerson: "Ms. B",
+        //       isPrimary: true,
+        //     },
+        //   ],
+        //   bankDetails: [
+        //     {
+        //       bankName: "asdfa",
+        //       accountHolderName: "asdfgfds",
+        //       ifscCode: "12341",
+        //       accountNo: "123432",
+        //       country: "IN",
+        //     },
+        //     {
+        //       bankName: "Bank testing name",
+        //       accountHolderName: "Account Holder",
+        //       ifscCode: "IFSC34242",
+        //       accountNo: "123456789012",
+        //       country: "UK",
+        //     },
+        //   ],
+        //   documents: {
+        //     panCard: {},
+        //     aadhaarCard: {},
+        //     gstCertificate: {},
+        //     tanDocument: {},
+        //     officeIdCard: {},
+        //     letter: {},
+        //     specimenSignature: {},
+        //     other: {},
+        //   },
+        //   action_for: "C",
+        //   action_type: "5",
+        //   mob_number: "9876543210",
+        //   plant: "2600",
+        //   pending_with: "200015",
+        //   pernr: "200015",
+        // };
         return {
           panAvailable: "yes",
           panNumber: "",
@@ -70,14 +190,40 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             customerBranchName: "",
           },
 
-          contactDetails: [{ contactNo: "234234234", email: "t@t.com", contactPerson: "Test", isPrimary: true }],
-          bankDetails: [{ bankName: "asdfa", accountHolderName: "asdfgfds", ifscCode: "12341", accountNo: "123432", country: "IN" }],
+          representative: [
+            {
+              repName: "",
+              repMobileNo: "",
+              repEmail: "",
+              repPosition: "",
+              repCreationDate: "",
+              repIsActivated: "",
+              repDeactivateDate: "",
+              repOtpVerified: "",
+            },
+          ],
+
+          serviceSecondaryAddress: [
+            {
+              serviceBranchName: "",
+              serviceAddress1: "",
+              serviceAddress2: "",
+              serviceAddress3: "",
+              serviceState: "",
+              serviceDistrict: "",
+              serviceCity: "",
+              servicePincode: "",
+            },
+          ],
+
+          contactDetails: [{ contactNo: "", email: "", contactPerson: "", isPrimary: true }],
+          bankDetails: [{ bankName: "", accountHolderName: "", ifscCode: "", accountNo: "", country: "IN" }],
         };
       }
     },
   });
 
-  const { mutate: mutateRegisterDepositor, isPending: isSubmitting } = useMutation({
+  const { mutateAsync: mutateRegisterDepositor, isPending: isSubmitting } = useMutation({
     mutationFn: (data: DocumentFormValues) => postRegisterDepositor(data),
     onSuccess: (res) => {
       toast.success(`Depositor registered successfully! ${res?.req_number}`);
@@ -87,8 +233,8 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     },
   });
 
-  const { mutate: mutateApproveForm, isPending: isApproveLoading } = useMutation({
-    mutationFn: () => postApproveForm(reqNumber as string),
+  const { mutateAsync: mutateApproveForm, isPending: isApproveLoading } = useMutation({
+    mutationFn: (id: string) => postApproveForm({ user_id: STATIC_EMP_NO, remarks: "" }, id),
     onSuccess: (res) => {
       toast.success(`Depositor approved successfully! ${res?.req_number}`);
     },
@@ -98,9 +244,9 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   });
 
   const { mutate: mutateRejectForm, isPending: isRejectLoading } = useMutation({
-    mutationFn: () => postRejectForm(reqNumber as string),
+    mutationFn: (id: string) => postRejectForm({ user_id: STATIC_EMP_NO, remarks: "" }, id),
     onSuccess: (res) => {
-      toast.success(`Depositor approved successfully! ${res?.req_number}`);
+      toast.success(`Depositor rejected! ${res?.req_number}`);
     },
     onError: (err: AxiosError<IAPIErrorResponse>) => {
       toast.error(err.response?.data?.message ?? "Failed to register depositor");
@@ -109,7 +255,12 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
 
   const handleApproveClick = async () => {
     try {
-      await mutateApproveForm();
+      if (reqNumber) {
+        await mutateApproveForm(reqNumber);
+      } else {
+        toast.error("Request number not found!");
+        return;
+      }
       navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
     } catch (error) {
       console.error("Unexpected error during approval:", error);
@@ -118,8 +269,12 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
 
   const handleRejectClick = async () => {
     try {
-      await mutateRejectForm();
-      mutateRejectForm();
+      if (reqNumber) {
+        await mutateRejectForm(reqNumber);
+      } else {
+        toast.error("Request number not found!");
+        return;
+      }
       navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
     } catch (error) {
       console.error("Unexpected error during rejection:", error);
@@ -196,8 +351,12 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     // validateDocuments(data);
     try {
       setIsLoading(true);
-      mutateRegisterDepositor(payloadData);
-      navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
+      const res = await mutateRegisterDepositor(payloadData);
+      if (res?.success && isEmployee) {
+        await mutateApproveForm(res?.req_number);
+      } else {
+        navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
+      }
     } catch (error) {
       console.error("Error fetching districts:", error);
     } finally {
@@ -214,6 +373,8 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     );
   }
 
+  console.log("form", form.formState.errors); // <- watch this in dev tools
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto w-[inherit]">
@@ -229,6 +390,8 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             <ExporterImporterSection form={form} />
             <OptionalFeaturesSection form={form} />
             <ContactDetailsSection form={form} />
+            <ServiceSecondarySection form={form} />
+            <RepresentativeSection form={form} />
             <BankDetailsSection form={form} />
             <DocumentUploadTable />
           </div>

@@ -61,9 +61,9 @@ const getDistricts = async (selectedState: string) => {
   }
 };
 
-const postApproveForm = async (num: string) => {
+const postApproveForm = async (data: { remarks?: string; user_id: string }, req_no: string) => {
   try {
-    const response = await api.get(`${API_ENDPOINTS?.APPROVE_FORM}/${num}`);
+    const response = await api.put(`${API_ENDPOINTS?.APPROVE_FORM}/${req_no}`, data);
     return response?.data;
   } catch (error) {
     console.error("Error approving form: ", error);
@@ -71,9 +71,9 @@ const postApproveForm = async (num: string) => {
   }
 };
 
-const postRejectForm = async (num: string) => {
+const postRejectForm = async (data: { remarks?: string; user_id: string }, req_no: string) => {
   try {
-    const response = await api.get(`${API_ENDPOINTS?.REJECT_FORM}/${num}`);
+    const response = await api.put(`${API_ENDPOINTS?.REJECT_FORM}/${req_no}`, data);
     return response?.data;
   } catch (error) {
     console.error("Error rejecting form: ", error);
@@ -81,4 +81,14 @@ const postRejectForm = async (num: string) => {
   }
 };
 
-export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList, getDistricts, postApproveForm, postRejectForm };
+const postDeleteForm = async (req_no: string) => {
+  try {
+    const response = await api.put(`${API_ENDPOINTS?.DELETE_FORM}/${req_no}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error rejecting form: ", error);
+    return Promise.reject(error);
+  }
+};
+
+export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList, getDistricts, postApproveForm, postRejectForm, postDeleteForm };

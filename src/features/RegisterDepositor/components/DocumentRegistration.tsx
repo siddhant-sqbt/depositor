@@ -55,8 +55,8 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
           control={form.control}
           name="panAvailable"
           render={({ field }) => (
-            <FormItem className="mx-auto">
-              <FormLabel>PAN Available</FormLabel>
+            <FormItem className="mx-auto mb-4">
+              <FormLabel className="mx-auto mb-2">PAN Available</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={(value) => {

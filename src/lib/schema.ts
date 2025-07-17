@@ -36,10 +36,39 @@ export const registerDepositorFormSchema = z
       auction: z.boolean().optional(),
     }),
 
+    serviceSecondaryAddress: z.array(
+      z.object({
+        serviceBranchName: z.string().optional(),
+        serviceAddress1: z.string().optional(),
+        serviceAddress2: z.string().optional(),
+        serviceAddress3: z.string().optional(),
+        serviceState: z.string().optional(),
+        serviceDistrict: z.string().optional(),
+        serviceCity: z.string().optional(),
+        servicePincode: z.string().optional(),
+      })
+    ),
+
+    representative: z.array(
+      z.object({
+        repName: z.string().optional(),
+        repMobileNo: z.string().optional(),
+        repEmail: z.email().optional(),
+        repPosition: z.string().optional(),
+        repCreationDate: z.string().optional(),
+        repIsActivated: z.string().optional(),
+        repDeactivateDate: z.string().optional(),
+        repOtpVerified: z.string().optional(),
+      })
+    ),
+
     prefferedLocationDetails: z.object({
-      warehouseType: z.string().min(1, "warehouse Type is required"),
-      warehouseState: z.string().min(1, "warehouse State is required"),
-      warehouseName: z.string().min(1, "warehouse Name is required"),
+      // warehouseType: z.string().min(1, "warehouse Type is required"),
+      warehouseType: z.string().optional(),
+      // warehouseState: z.string().min(1, "warehouse State is required"),
+      warehouseState: z.string().optional(),
+      // warehouseName: z.string().min(1, "warehouse Name is required"),
+      warehouseName: z.string().optional(),
       customerBranchName: z.string().optional(),
     }),
 

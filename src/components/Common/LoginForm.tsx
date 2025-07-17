@@ -26,7 +26,7 @@ const LoginFormSection = () => {
       navigate(ROUTES?.C_OVERVIEW);
     } else {
       localStorage.setItem("ROLE", "E");
-      navigate(ROUTES?.E_OVERVIEW);
+      navigate(ROUTES?.E_PENDING);
     }
   };
 

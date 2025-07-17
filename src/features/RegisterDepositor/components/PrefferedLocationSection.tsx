@@ -48,103 +48,106 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
       />
 
       <CardContent className={`${isEmployee ? "card-responsive-4" : "card-responsive-3"} `}>
-        <FormField
-          control={form.control}
-          name="prefferedLocationDetails.warehouseType"
-          render={({ field }) => (
-            <FormItem>
-              <FormItem className="flex items-center space-x-2">
-                <FormLabel className="">Warehouse Type</FormLabel>
-              </FormItem>
-              <Select
-                onValueChange={(e) => {
-                  handleWarehouseTypeChange();
-                  field.onChange(e);
-                }}
-                value={field.value}
-              >
-                <FormControl className="w-full">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {WAREHOUSE_TYPES.map((type: IWarehouseLabel, index: number) => (
-                    <SelectItem key={index} value={type?.value}>
-                      {type?.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="prefferedLocationDetails.warehouseState"
-          render={({ field }) => (
-            <FormItem>
-              <FormItem className="flex items-center space-x-2">
-                <FormLabel className="">Warehouse State</FormLabel>
-              </FormItem>
-              <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType}>
-                <FormControl className="w-full">
-                  <SelectTrigger>
-                    <SelectValue placeholder={!selectedType ? "Select warehouse Type first" : isStateLoading ? "Loading..." : "Select state"} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {isStateLoading ? (
-                    <SelectItem value="loading" disabled>
-                      Loading states...
-                    </SelectItem>
-                  ) : (
-                    currentStateList?.states?.map((option: string, index) => (
-                      <SelectItem key={index} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="prefferedLocationDetails.warehouseName"
-          render={({ field }) => (
-            <FormItem>
-              <FormItem className="flex items-center space-x-2">
-                <FormLabel className="">Warehouse Name</FormLabel>
-              </FormItem>
-              <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType || !selectedState}>
-                <FormControl className="w-full">
-                  <SelectTrigger>
-                    <SelectValue placeholder={!selectedState ? "Select warehouse State first" : isNamesLoading ? "Loading..." : "Select Warehouse Name"} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {isNamesLoading ? (
-                    <SelectItem value="loading" disabled>
-                      Loading states...
-                    </SelectItem>
-                  ) : (
-                    namesList?.data?.map((option: IWarehouseNameOption, index: number) => (
-                      <SelectItem key={index} value={option?.plant}>
-                        {option?.profit_center_description}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {isEmployee && (
+        {!isEmployee ? (
+          <>
+            <FormField
+              control={form.control}
+              name="prefferedLocationDetails.warehouseType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem className="flex items-center space-x-2">
+                    <FormLabel className="">Warehouse Type</FormLabel>
+                  </FormItem>
+                  <Select
+                    onValueChange={(e) => {
+                      handleWarehouseTypeChange();
+                      field.onChange(e);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {WAREHOUSE_TYPES.map((type: IWarehouseLabel, index: number) => (
+                        <SelectItem key={index} value={type?.value}>
+                          {type?.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="prefferedLocationDetails.warehouseState"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem className="flex items-center space-x-2">
+                    <FormLabel className="">Warehouse State</FormLabel>
+                  </FormItem>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType}>
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder={!selectedType ? "Select warehouse Type first" : isStateLoading ? "Loading..." : "Select state"} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {isStateLoading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading states...
+                        </SelectItem>
+                      ) : (
+                        currentStateList?.states?.map((option: string, index) => (
+                          <SelectItem key={index} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="prefferedLocationDetails.warehouseName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem className="flex items-center space-x-2">
+                    <FormLabel className="">Warehouse Name</FormLabel>
+                  </FormItem>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType || !selectedState}>
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder={!selectedState ? "Select warehouse State first" : isNamesLoading ? "Loading..." : "Select Warehouse Name"} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {isNamesLoading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading states...
+                        </SelectItem>
+                      ) : (
+                        namesList?.data?.map((option: IWarehouseNameOption, index: number) => (
+                          <SelectItem key={index} value={option?.plant}>
+                            {option?.profit_center_description}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        ) : (
           <FormField
             control={form.control}
             name="prefferedLocationDetails.customerBranchName"

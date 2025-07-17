@@ -17,12 +17,14 @@ import { Edit, Eye, Loader2, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { ITableData } from "@/lib/types";
-import { useQuery } from "@tanstack/react-query";
+import type { IAPIErrorResponse, ITableData } from "@/lib/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
-import { getTableList } from "@/lib/apis/apis";
+import { getTableList, postDeleteForm } from "@/lib/apis/apis";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 // /generate_otp mobile POST
 // validate_otp otp mob_number POST
@@ -95,7 +97,8 @@ const getStatusColor = (status: "5" | "10" | "20" | "50") => {
     "5": "bg-yellow-100 text-yellow-800",
     "10": "bg-green-100 text-green-800",
     "20": "bg-green-100 text-green-800",
-    "50": "bg-green-100 text-green-800",
+    "50": "bg-red-100 text-red-800",
+    "90": "bg-red-100 text-red-800",
     // rejected: "bg-red-100 text-red-800",
     // "under review": "bg-blue-100 text-blue-800",
   };
@@ -105,6 +108,18 @@ const getStatusColor = (status: "5" | "10" | "20" | "50") => {
 export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
   const navigate = useNavigate();
   const isEmployee = localStorage?.getItem("ROLE") === "E";
+
+  const { mutate: mutateDeleteForm, isPending: isRejectLoading } = useMutation({
+    mutationFn: (id: string) => postDeleteForm(id),
+    onSuccess: (res) => {
+      toast.success(`Depositor rejected! ${res?.req_number}`);
+    },
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
+    },
+  });
+
+  console.log("mutateDeleteForm", mutateDeleteForm);
 
   const columns: ColumnDef<ITableData>[] = [
     // {
@@ -226,7 +241,15 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
                   <Button variant="outline" size="icon" title="Approve" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700">
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" title="Reject" className="bg-red-100 hover:bg-red-200 border-none text-red-900">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    title="Reject"
+                    onClick={() => {
+                      // mutateDeleteForm(row?.original?.req_number);
+                    }}
+                    className="bg-red-100 hover:bg-red-200 border-none text-red-900"
+                  >
                     <Trash className="h-4 w-4" />
                   </Button>
                 </>
@@ -273,6 +296,14 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
       rowSelection,
     },
   });
+
+  if (isRejectLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
+        <Loader2 className="h-10 w-10 animate-spin text-gray-600" />
+      </div>
+    );
+  }
 
   if (query.isLoading) {
     return (
