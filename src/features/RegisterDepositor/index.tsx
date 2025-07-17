@@ -337,22 +337,22 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   const validateDocuments = (data: DocumentFormValues) => {
     // Check PAN Card validation
     if (data.panNumber && data?.documents?.panCard?.length === 0) {
-      toast("PAN Card document is required when PAN number is provided");
+      toast.error("PAN Card document is required when PAN number is provided");
     }
 
     // Check Aadhaar Card validation
     if (data.aadhaarNumber && data?.documents?.aadhaarCard?.length === 0) {
-      toast("Aadhaar Card document is required when Aadhaar number is provided");
+      toast.error("Aadhaar Card document is required when Aadhaar number is provided");
     }
 
     // Check GST Certificate validation
     if (data?.gstNumber && data?.documents?.gstCertificate?.length === 0) {
-      toast("GST Certificate document is required when GST number is provided");
+      toast.error("GST Certificate document is required when GST number is provided");
     }
 
     // Check TAN Document validation
     if (data.tanNumber && data?.documents?.tanDocument?.length === 0) {
-      toast("TAN Document is required when TAN number is provided");
+      toast.error("TAN Document is required when TAN number is provided");
     }
   };
 
