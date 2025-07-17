@@ -17,6 +17,7 @@ import EmpPendingPage from "./pages/Employee/Pending";
 import OverviewPage from "./pages/CustomerOverview";
 import EmpViewRegisterDepositor from "./pages/Employee/ViewRegisterDepositor";
 import EmpRegisterDepositorPage from "./pages/Employee/RegisterDepositor";
+import EditRegisterDepositor from "./pages/EditRegisterDepositor";
 
 const queryClient = new QueryClient();
 
@@ -36,11 +37,13 @@ function App() {
             <Route path={ROUTES?.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES?.C_OVERVIEW} element={<CustomerOverview />} />
             <Route path={`${ROUTES?.C_VIEW}/:id`} element={<ViewRegisterDepositor />} />
+            <Route path={`${ROUTES?.C_EDIT}/:id`} element={<EditRegisterDepositor />} />
             <Route path={ROUTES?.C_REGISTER_DEPOSITOR} element={<RegisterDepositorPage />} />
 
             <Route path={ROUTES?.E_PENDING} element={<EmpPendingPage />} />
             <Route path={ROUTES?.E_OVERVIEW} element={<OverviewPage />} />
             <Route path={`${ROUTES?.E_VIEW}/:id`} element={<EmpViewRegisterDepositor />} />
+            <Route path={`${ROUTES?.E_EDIT}/:id`} element={<EditRegisterDepositor />} />
             <Route path={ROUTES?.E_REGISTER_DEPOSITOR} element={<EmpRegisterDepositorPage />} />
 
             {/* <Route path="*" element={<NotFound />} /> */}

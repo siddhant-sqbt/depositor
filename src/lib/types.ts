@@ -64,3 +64,12 @@ export interface IWarehouseNameOption {
   plant: string;
   profit_center_description: string;
 }
+
+export interface IAttachment {
+  file_name: string;
+  file_type: string;
+  file_key: string;
+  is_uploaded?: string;
+}
+
+export type IDocumentKeys = "other" | "letter" | "panCard" | "aadhaarCard" | "tanDocument" | "officeIdCard" | "gstCertificate" | "specimenSignature";

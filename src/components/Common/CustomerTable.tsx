@@ -18,7 +18,7 @@ import { Edit, Eye, Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { IAPIErrorResponse, ITableData } from "@/lib/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
 import { getTableList, postDeleteForm } from "@/lib/apis/apis";
 import moment from "moment";
@@ -107,19 +107,35 @@ const getStatusColor = (status: "5" | "10" | "20" | "50") => {
 // eslint-disable-next-line react-refresh/only-export-components
 export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const isEmployee = localStorage?.getItem("ROLE") === "E";
+
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+
+  const actionType = isPendingPage || isEmployee ? STATIC_EMP_NO : STATIC_MOBILE_NO;
+  const actionFor = isPendingPage ? "EP" : isEmployee ? "EO" : "CO";
+
+  const query = useQuery({
+    queryKey: ["customer-table", actionType, actionFor],
+    queryFn: () => getTableList(actionType, actionFor),
+  });
 
   const { mutate: mutateDeleteForm, isPending: isRejectLoading } = useMutation({
     mutationFn: (id: string) => postDeleteForm(id),
     onSuccess: (res) => {
       toast.success(`Depositor rejected! ${res?.req_number}`);
+      queryClient.invalidateQueries({
+        queryKey: ["customer-table", actionType, actionFor],
+      });
     },
     onError: (err: AxiosError<IAPIErrorResponse>) => {
       toast.error(err.response?.data?.message ?? "Failed to register depositor");
     },
   });
-
-  console.log("mutateDeleteForm", mutateDeleteForm);
 
   const columns: ColumnDef<ITableData>[] = [
     // {
@@ -218,6 +234,9 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
         const handleViewClick = () => {
           navigate(`${isEmployee ? ROUTES?.E_VIEW : ROUTES?.C_VIEW}/${row?.original?.req_number}`);
         };
+        const handleEditClick = () => {
+          navigate(`${isEmployee ? ROUTES?.E_EDIT : ROUTES?.C_EDIT}/${row?.original?.req_number}`);
+        };
         return (
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={handleViewClick} size="icon" title="View" className="bg-green-100 hover:bg-green-200 border-none text-green-900">
@@ -238,7 +257,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
             <>
               {isDraft && (
                 <>
-                  <Button variant="outline" size="icon" title="Approve" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700">
+                  <Button variant="outline" onClick={handleEditClick} size="icon" title="Approve" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700">
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
@@ -246,7 +265,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
                     size="icon"
                     title="Reject"
                     onClick={() => {
-                      // mutateDeleteForm(row?.original?.req_number);
+                      mutateDeleteForm(row?.original?.req_number);
                     }}
                     className="bg-red-100 hover:bg-red-200 border-none text-red-900"
                   >
@@ -264,19 +283,6 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
       // },
     },
   ];
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  const actionType = isPendingPage || isEmployee ? STATIC_EMP_NO : STATIC_MOBILE_NO;
-  const actionFor = isPendingPage ? "EP" : isEmployee ? "EO" : "CO";
-
-  const query = useQuery({
-    queryKey: ["customer-table", actionType, actionFor],
-    queryFn: () => getTableList(actionType, actionFor),
-  });
 
   const table = useReactTable({
     data: query?.data?.data ?? [],

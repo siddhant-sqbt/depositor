@@ -4,7 +4,7 @@ import api from "./axiosInstance";
 
 const postRegisterDepositor = async (data: DocumentFormValues) => {
   try {
-    const response = await api.post(API_ENDPOINTS?.REGISTER_DEPOSITOR, data);
+    const response = await api.post(API_ENDPOINTS?.POST_REGISTER_DEPOSITOR, data);
     return response?.data;
   } catch (error) {
     console.error("Error submitting contact form: ", error);
@@ -91,4 +91,47 @@ const postDeleteForm = async (req_no: string) => {
   }
 };
 
-export { postRegisterDepositor, getRegisterDepositorDetails, getTableList, getStatesList, getStateWiseNameList, getDistricts, postApproveForm, postRejectForm, postDeleteForm };
+const getAttachment = async (req_no: string, doc_key: string) => {
+  try {
+    const response = await api.get(`${API_ENDPOINTS?.GET_ATTACHMENT}/${req_no}/${doc_key}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting document: ", error);
+    return Promise.reject(error);
+  }
+};
+
+const deleteAttachment = async (req_no: string, doc_key: string) => {
+  try {
+    const response = await api.delete(`${API_ENDPOINTS?.DELETE_ATTACHMENT}/${req_no}/${doc_key}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error deleting document: ", error);
+    return Promise.reject(error);
+  }
+};
+
+const updateRegisterDepositor = async (data: DocumentFormValues) => {
+  try {
+    const response = await api.put(API_ENDPOINTS?.UPDATE_REGISTER_DEPOSITOR, data);
+    return response?.data;
+  } catch (error) {
+    console.error("Error updating contact form: ", error);
+    return Promise.reject(error);
+  }
+};
+
+export {
+  postRegisterDepositor,
+  updateRegisterDepositor,
+  getRegisterDepositorDetails,
+  getTableList,
+  getStatesList,
+  getStateWiseNameList,
+  getDistricts,
+  postApproveForm,
+  postRejectForm,
+  postDeleteForm,
+  getAttachment,
+  deleteAttachment,
+};

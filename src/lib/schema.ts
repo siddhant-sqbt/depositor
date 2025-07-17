@@ -1,196 +1,195 @@
 import z from "zod";
 
-export const registerDepositorFormSchema = z
-  .object({
-    panAvailable: z.enum(["yes", "no"], { message: "Select PAN availability" }),
-    panNumber: z.string().optional(),
-    tanNumber: z.string().optional(),
-    gstNumber: z.string().optional(),
-    aadhaarNumber: z.string().optional(),
+export const registerDepositorFormSchema = z.object({
+  panAvailable: z.enum(["yes", "no"], { message: "Select PAN availability" }),
+  panNumber: z.string().optional(),
+  tanNumber: z.string().optional(),
+  gstNumber: z.string().optional(),
+  aadhaarNumber: z.string().optional(),
 
-    partyType: z.string().min(1, "Party Type is required"),
-    subPartyType: z.string().min(1, "Sub Party Type is required"),
-    pinNumber: z.string().optional(),
-    name1: z.string().max(40).optional(),
-    name2: z.string().max(35).optional(),
-    name3: z.string().max(80).optional(),
-    address1: z.string().optional(),
-    address2: z.string().optional(),
-    address3: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().min(1, "State is required").optional(),
-    district: z.string().optional(),
+  partyType: z.string().min(1, "Party Type is required"),
+  subPartyType: z.string().min(1, "Sub Party Type is required"),
+  pinNumber: z.string().optional(),
+  name1: z.string().max(40).optional(),
+  name2: z.string().max(35).optional(),
+  name3: z.string().max(80).optional(),
+  address1: z.string().optional(),
+  address2: z.string().optional(),
+  address3: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  district: z.string().optional(),
 
-    isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
-    iecNumber: z.string().optional(),
+  isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
+  iecNumber: z.string().optional(),
 
-    isCHA: z.enum(["Yes", "No"], { message: "Please choose CHA option" }),
-    chaLicenseNumber: z.string().optional(),
+  isCHA: z.enum(["Yes", "No"], { message: "Please choose CHA option" }),
+  chaLicenseNumber: z.string().optional(),
 
-    optionalFeatures: z.object({
-      forwarder: z.boolean().optional(),
-      consolid: z.boolean().optional(),
-      shippingLine: z.boolean().optional(),
-      transporter: z.boolean().optional(),
-      rent: z.boolean().optional(),
-      auction: z.boolean().optional(),
-    }),
+  optionalFeatures: z.object({
+    forwarder: z.boolean().optional(),
+    consolid: z.boolean().optional(),
+    shippingLine: z.boolean().optional(),
+    transporter: z.boolean().optional(),
+    rent: z.boolean().optional(),
+    auction: z.boolean().optional(),
+  }),
 
-    serviceSecondaryAddress: z.array(
-      z.object({
-        serviceBranchName: z.string().optional(),
-        serviceAddress1: z.string().optional(),
-        serviceAddress2: z.string().optional(),
-        serviceAddress3: z.string().optional(),
-        serviceState: z.string().optional(),
-        serviceDistrict: z.string().optional(),
-        serviceCity: z.string().optional(),
-        servicePincode: z.string().optional(),
-      })
-    ),
+  serviceSecondaryAddress: z.array(
+    z.object({
+      serviceBranchName: z.string().optional(),
+      serviceAddress1: z.string().optional(),
+      serviceAddress2: z.string().optional(),
+      serviceAddress3: z.string().optional(),
+      serviceState: z.string().optional(),
+      serviceDistrict: z.string().optional(),
+      serviceCity: z.string().optional(),
+      servicePincode: z.string().optional(),
+    })
+  ),
 
-    representative: z.array(
-      z.object({
-        repName: z.string().optional(),
-        repMobileNo: z.string().optional(),
-        repEmail: z.email().optional(),
-        repPosition: z.string().optional(),
-        repCreationDate: z.string().optional(),
-        repIsActivated: z.string().optional(),
-        repDeactivateDate: z.string().optional(),
-        repOtpVerified: z.string().optional(),
-      })
-    ),
+  representative: z.array(
+    z.object({
+      repName: z.string().optional(),
+      repMobileNo: z.string().optional(),
+      repEmail: z.string().optional(),
+      repPosition: z.string().optional(),
+      repCreationDate: z.string().optional(),
+      repIsActivated: z.string().optional(),
+      repDeactivateDate: z.string().optional(),
+      repOtpVerified: z.string().optional(),
+    })
+  ),
 
-    prefferedLocationDetails: z.object({
-      // warehouseType: z.string().min(1, "warehouse Type is required"),
-      warehouseType: z.string().optional(),
-      // warehouseState: z.string().min(1, "warehouse State is required"),
-      warehouseState: z.string().optional(),
-      // warehouseName: z.string().min(1, "warehouse Name is required"),
-      warehouseName: z.string().optional(),
-      customerBranchName: z.string().optional(),
-    }),
+  prefferedLocationDetails: z.object({
+    // warehouseType: z.string().min(1, "warehouse Type is required"),
+    warehouseType: z.string().optional(),
+    // warehouseState: z.string().min(1, "warehouse State is required"),
+    warehouseState: z.string().optional(),
+    // warehouseName: z.string().min(1, "warehouse Name is required"),
+    warehouseName: z.string().optional(),
+    customerBranchName: z.string().optional(),
+  }),
 
-    contactDetails: z.array(
-      z.object({
-        contactNo: z.string().min(1, "Contact No is required"),
-        email: z.string().email("Invalid email"),
-        contactPerson: z.string().min(1, "Contact Person is required"),
-        isPrimary: z.boolean(),
-      })
-    ),
+  contactDetails: z.array(
+    z.object({
+      contactNo: z.string().optional(),
+      email: z.string().optional(),
+      contactPerson: z.string().optional(),
+      isPrimary: z.boolean().optional(),
+    })
+  ),
 
-    bankDetails: z.array(
-      z.object({
-        bankName: z.string().min(1, "Bank Name is required"),
-        accountHolderName: z.string().min(1, "Account Holder Name is required"),
-        ifscCode: z.string().min(1, "IFSC is required"),
-        accountNo: z.string().min(1, "Account Number is required"),
-        country: z.string().min(1, "Country is required"),
-      })
-    ),
-    documents: z.object({
-      panCard: z.any().optional(),
-      aadhaarCard: z.any().optional(),
-      gstCertificate: z.any().optional(),
-      tanDocument: z.any().optional(),
-      officeIdCard: z.any().optional(),
-      letter: z.any().optional(),
-      specimenSignature: z.any().optional(),
-      other: z.any().optional(),
-    }),
-  })
-  .refine(
-    (data) => {
-      // Skip validation if PAN is not available
-      if (data.panAvailable === "no") {
-        return true;
-      }
+  bankDetails: z.array(
+    z.object({
+      bankName: z.string().optional(),
+      accountHolderName: z.string().optional(),
+      ifscCode: z.string().optional(),
+      accountNo: z.string().optional(),
+      country: z.string().optional(),
+    })
+  ),
+  documents: z.object({
+    other: z.any().optional(),
+    letter: z.any().optional(),
+    panCard: z.any().optional(),
+    aadhaarCard: z.any().optional(),
+    tanDocument: z.any().optional(),
+    officeIdCard: z.any().optional(),
+    gstCertificate: z.any().optional(),
+    specimenSignature: z.any().optional(),
+  }),
+});
+// .refine(
+//   (data) => {
+//     // Skip validation if PAN is not available
+//     if (data.panAvailable === "no") {
+//       return true;
+//     }
 
-      // Skip validation if PAN number is not provided
-      if (!data.panNumber || data.panNumber.length < 4) {
-        return true;
-      }
+//     // Skip validation if PAN number is not provided
+//     if (!data.panNumber || data.panNumber.length < 4) {
+//       return true;
+//     }
 
-      // Get the 4th character of PAN
-      const pan4thDigit = data.panNumber[3].toUpperCase();
+//     // Get the 4th character of PAN
+//     const pan4thDigit = data.panNumber[3].toUpperCase();
 
-      // Define validation rules based on PAN 4th digit
-      const validationRules = {
-        P: { panRequired: true, gstRequired: false, tanRequired: false }, // ZIND
-        F: { panRequired: true, gstRequired: false, tanRequired: false }, // ZLLP
-        C: { panRequired: true, gstRequired: true, tanRequired: true }, // ZCOM
-        G: { panRequired: false, gstRequired: false, tanRequired: false }, // ZGOV
-        A: { panRequired: true, gstRequired: true, tanRequired: true }, // ZAOP
-        B: { panRequired: true, gstRequired: true, tanRequired: true }, // ZBOI
-        T: { panRequired: true, gstRequired: true, tanRequired: true }, // ZTRU
-        L: { panRequired: true, gstRequired: true, tanRequired: true }, // ZLOC
-        J: { panRequired: true, gstRequired: true, tanRequired: true }, // ZART
-        H: { panRequired: true, gstRequired: false, tanRequired: false }, // Others
-      };
+//     // Define validation rules based on PAN 4th digit
+//     const validationRules = {
+//       P: { panRequired: true, gstRequired: false, tanRequired: false }, // ZIND
+//       F: { panRequired: true, gstRequired: false, tanRequired: false }, // ZLLP
+//       C: { panRequired: true, gstRequired: true, tanRequired: true }, // ZCOM
+//       G: { panRequired: false, gstRequired: false, tanRequired: false }, // ZGOV
+//       A: { panRequired: true, gstRequired: true, tanRequired: true }, // ZAOP
+//       B: { panRequired: true, gstRequired: true, tanRequired: true }, // ZBOI
+//       T: { panRequired: true, gstRequired: true, tanRequired: true }, // ZTRU
+//       L: { panRequired: true, gstRequired: true, tanRequired: true }, // ZLOC
+//       J: { panRequired: true, gstRequired: true, tanRequired: true }, // ZART
+//       H: { panRequired: true, gstRequired: false, tanRequired: false }, // Others
+//     };
 
-      type PanFourthChar = keyof typeof validationRules;
+//     type PanFourthChar = keyof typeof validationRules;
 
-      const rule = validationRules[pan4thDigit as PanFourthChar];
+//     const rule = validationRules[pan4thDigit as PanFourthChar];
 
-      // If no specific rule found, use default validation
-      if (!rule) {
-        return true;
-      }
+//     // If no specific rule found, use default validation
+//     if (!rule) {
+//       return true;
+//     }
 
-      // Validate GST requirement
-      if (rule.gstRequired && (!data.gstNumber || data.gstNumber.trim() === "")) {
-        return false;
-      }
+//     // Validate GST requirement
+//     if (rule.gstRequired && (!data.gstNumber || data.gstNumber.trim() === "")) {
+//       return false;
+//     }
 
-      // Validate TAN requirement
-      if (rule.tanRequired && (!data.tanNumber || data.tanNumber.trim() === "")) {
-        return false;
-      }
+//     // Validate TAN requirement
+//     if (rule.tanRequired && (!data.tanNumber || data.tanNumber.trim() === "")) {
+//       return false;
+//     }
 
-      return true;
-    },
-    {
-      message: "Required fields are missing based on PAN type",
-      path: ["panNumber"], // This will show the error on the panNumber field
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
-        const pan4thDigit = data.panNumber[3].toUpperCase();
-        const gstRequiredTypes = ["C", "A", "B", "T", "L", "J"];
+//     return true;
+//   },
+//   {
+//     message: "Required fields are missing based on PAN type",
+//     path: ["panNumber"], // This will show the error on the panNumber field
+//   }
+// )
+// .refine(
+//   (data) => {
+//     if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
+//       const pan4thDigit = data.panNumber[3].toUpperCase();
+//       const gstRequiredTypes = ["C", "A", "B", "T", "L", "J"];
 
-        if (gstRequiredTypes.includes(pan4thDigit) && (!data.gstNumber || data.gstNumber.trim() === "")) {
-          return false;
-        }
-      }
-      return true;
-    },
-    {
-      message: "GST Number is required for this PAN type",
-      path: ["gstNumber"],
-    }
-  )
-  .refine(
-    (data) => {
-      // Custom error messages for TAN
-      if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
-        const pan4thDigit = data.panNumber[3].toUpperCase();
-        const tanRequiredTypes = ["C", "A", "B", "T", "L", "J"];
+//       if (gstRequiredTypes.includes(pan4thDigit) && (!data.gstNumber || data.gstNumber.trim() === "")) {
+//         return false;
+//       }
+//     }
+//     return true;
+//   },
+//   {
+//     message: "GST Number is required for this PAN type",
+//     path: ["gstNumber"],
+//   }
+// )
+// .refine(
+//   (data) => {
+//     // Custom error messages for TAN
+//     if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
+//       const pan4thDigit = data.panNumber[3].toUpperCase();
+//       const tanRequiredTypes = ["C", "A", "B", "T", "L", "J"];
 
-        if (tanRequiredTypes.includes(pan4thDigit) && (!data.tanNumber || data.tanNumber.trim() === "")) {
-          return false;
-        }
-      }
-      return true;
-    },
-    {
-      message: "TAN Number is required for this PAN type",
-      path: ["tanNumber"],
-    }
-  );
+//       if (tanRequiredTypes.includes(pan4thDigit) && (!data.tanNumber || data.tanNumber.trim() === "")) {
+//         return false;
+//       }
+//     }
+//     return true;
+//   },
+//   {
+//     message: "TAN Number is required for this PAN type",
+//     path: ["tanNumber"],
+//   }
+// );
 
 // Helper function to get field requirements based on PAN
 export const getFieldRequirements = (panNumber: string) => {

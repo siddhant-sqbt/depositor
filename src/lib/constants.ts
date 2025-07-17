@@ -4,17 +4,20 @@ export const ROUTES = {
   C_OVERVIEW: "/c/overview",
   C_REGISTER_DEPOSITOR: "/c/register-depositor",
   C_VIEW: "/c/view",
+  C_EDIT: "/c/edit",
 
   E_OVERVIEW: "/e/overview",
   E_REGISTER_DEPOSITOR: "/e/register-depositor",
   E_VIEW: "/e/view",
+  E_EDIT: "/e/edit",
   E_PENDING: "/e/approval-pending",
 
   LOGIN: "/login",
 };
 
 export const API_ENDPOINTS = {
-  REGISTER_DEPOSITOR: "/save_mdm_data",
+  POST_REGISTER_DEPOSITOR: "/save_mdm_data",
+  UPDATE_REGISTER_DEPOSITOR: "/update_mdm_data",
   VIEW_DEPOSITOR: "/get_mdm_data",
   LIST_DEPOSITOR: "/list_mdm_data",
   WAREHOUSE_STATES_LIST: "/get_ro_states",
@@ -22,6 +25,8 @@ export const API_ENDPOINTS = {
   APPROVE_FORM: "/approve_mdm_data",
   REJECT_FORM: "/reject_mdm_data",
   DELETE_FORM: "/delete_mdm_data",
+  GET_ATTACHMENT: "/get_attachment",
+  DELETE_ATTACHMENT: "/delete_attachment",
 };
 
 // ist_mdm_data?action_type=9876543210&action_for=CO&page=1&limit=10

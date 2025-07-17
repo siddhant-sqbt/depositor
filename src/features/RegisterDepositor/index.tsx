@@ -13,11 +13,11 @@ import ContactDetailsSection from "./components/ContactDetailsSection";
 import BankDetailsSection from "./components/BankDetailsSection";
 import PrefferedLocationSection from "./components/PrefferedLocationSection";
 import { DocumentUploadTable } from "./components/DocumentsSection";
-import { getRegisterDepositorDetails, postApproveForm, postRegisterDepositor, postRejectForm } from "@/lib/apis/apis";
+import { getRegisterDepositorDetails, postApproveForm, postRegisterDepositor, postRejectForm, updateRegisterDepositor } from "@/lib/apis/apis";
 
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES, STATIC_EMP_NO, STATIC_MOBILE_NO } from "@/lib/constants";
 import BasicDetailsSection from "./components/BasicDetailsSection";
 import { useState, type BaseSyntheticEvent } from "react";
@@ -25,24 +25,35 @@ import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import ServiceSecondarySection from "./components/ServiceSecondarySection";
 import RepresentativeSection from "./components/RepresentativeSection";
+import { buildAttachments, buildDocumentsFromAttachments } from "@/lib/utils";
 // import RepresentativeSection from "./components/RepresentativeSection";
 
 // action_type (number), action_for (C or E)
 
 const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly, reqNumber }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const subpaths = location?.pathname?.split("/");
+
+  const isView = subpaths?.includes("view");
+  const isEdit = subpaths?.includes("edit");
+
   const isEmployee = localStorage?.getItem("ROLE") === "E";
-  const [isLoading, setIsLoading] = useState<boolean>(!!viewOnly && !!reqNumber);
+  const [isLoading, setIsLoading] = useState<boolean>((!!viewOnly || !!isEdit) && !!reqNumber);
 
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(registerDepositorFormSchema),
     defaultValues: async () => {
-      if (viewOnly && reqNumber) {
+      if ((viewOnly || isEdit) && reqNumber) {
         try {
           setIsLoading(true);
           const fetchedData = await getRegisterDepositorDetails(reqNumber);
-
-          return fetchedData?.data;
+          const data = fetchedData?.data;
+          const docs = buildDocumentsFromAttachments(data?.attachments);
+          delete data?.["attachments"];
+          data.documents = docs;
+          console.log("Data: ", data);
+          return data;
         } catch (err) {
           toast.error(JSON.stringify(err));
           return {};
@@ -233,6 +244,16 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     },
   });
 
+  const { mutateAsync: mutateUpdateRegisterDepositor, isPending: isUpdateSubmitting } = useMutation({
+    mutationFn: (data: DocumentFormValues) => updateRegisterDepositor(data),
+    onSuccess: (res) => {
+      toast.success(`Depositor registered successfully! ${res?.req_number}`);
+    },
+    onError: (err: AxiosError<IAPIErrorResponse>) => {
+      toast.error(err.response?.data?.message ?? "Failed to register depositor");
+    },
+  });
+
   const { mutateAsync: mutateApproveForm, isPending: isApproveLoading } = useMutation({
     mutationFn: (id: string) => postApproveForm({ user_id: STATIC_EMP_NO, remarks: "" }, id),
     onSuccess: (res) => {
@@ -242,6 +263,8 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
       toast.error(err.response?.data?.message ?? "Failed to register depositor");
     },
   });
+
+  console.log("error", form?.formState.errors);
 
   const { mutate: mutateRejectForm, isPending: isRejectLoading } = useMutation({
     mutationFn: (id: string) => postRejectForm({ user_id: STATIC_EMP_NO, remarks: "" }, id),
@@ -334,26 +357,41 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   // };
 
   const onSubmit = async (data: DocumentFormValues, event?: BaseSyntheticEvent) => {
+    const jsonData: any = data;
     const nativeEvent = event?.nativeEvent as SubmitEvent | undefined;
     const action = nativeEvent?.submitter instanceof HTMLElement ? nativeEvent.submitter.getAttribute("value") : undefined;
 
+    const documents = jsonData?.documents;
+
+    const attachments = await buildAttachments(documents);
+
+    delete jsonData["documents"];
+
     const payloadData = {
-      ...data,
+      ...jsonData,
       action_for: isEmployee ? "E" : "C",
       action_type: action === "draft" ? "5" : "10",
       mob_number: STATIC_MOBILE_NO,
-      plant: data?.prefferedLocationDetails?.warehouseName,
+      ...(isEmployee && { plant: jsonData?.prefferedLocationDetails?.warehouseName }),
+      ...(isEdit && { req_number: reqNumber }),
       pending_with: STATIC_EMP_NO,
       pernr: STATIC_EMP_NO,
+      attachments: attachments,
     };
 
     // validatePincode(data);
     // validateDocuments(data);
     try {
       setIsLoading(true);
-      const res = await mutateRegisterDepositor(payloadData);
+      let res;
+      if (isEdit) {
+        res = await mutateUpdateRegisterDepositor(payloadData);
+      } else {
+        res = await mutateRegisterDepositor(payloadData);
+      }
       if (res?.success && isEmployee) {
         await mutateApproveForm(res?.req_number);
+        navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
       } else {
         navigate(isEmployee ? ROUTES?.E_OVERVIEW : ROUTES?.C_OVERVIEW);
       }
@@ -364,7 +402,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     }
   };
 
-  if (isLoading || isSubmitting || isApproveLoading || isRejectLoading) {
+  if (isLoading || isSubmitting || isApproveLoading || isRejectLoading || isUpdateSubmitting) {
     return (
       <div className="w-full flex justify-center items-center py-10">
         <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
@@ -373,7 +411,8 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     );
   }
 
-  console.log("form", form.formState.errors); // <- watch this in dev tools
+  // console.log("form errors", form.formState.errors); // <- watch this in dev tools
+  // console.log("form values", form.getValues().documents); // <- watch this in dev tools
 
   return (
     <Form {...form}>
@@ -393,11 +432,11 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             <ServiceSecondarySection form={form} />
             <RepresentativeSection form={form} />
             <BankDetailsSection form={form} />
-            <DocumentUploadTable />
+            <DocumentUploadTable form={form} />
           </div>
         </div>
         <div className="shadow-sm p-4 border-t flex gap-2">
-          {viewOnly ? (
+          {isView ? (
             isEmployee && (
               <>
                 <Button type="button" variant={"secondary"} onClick={handleApproveClick} className="bg-green-100 hover:bg-green-200 border-none text-green-900 cursor-pointer">
