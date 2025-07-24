@@ -3,7 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { registerDepositorFormSchema } from "@/lib/schema";
 import type { DocumentFormValues } from "@/lib/types";
+import { getFieldRequiredStatus } from "@/lib/utils";
 import { Globe } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
 
@@ -54,7 +56,9 @@ const ExporterImporterSection = ({ form }: { form: UseFormReturn<DocumentFormVal
             name="iecNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>IEC Number</FormLabel>
+                <FormLabel>
+                  IEC Number <span className="text-red-500 ml-0.5">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input placeholder="Enter IEC Number" {...field} />
                 </FormControl>
@@ -101,7 +105,9 @@ const ExporterImporterSection = ({ form }: { form: UseFormReturn<DocumentFormVal
             name="chaLicenseNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CHA License Number</FormLabel>
+                <FormLabel>
+                  CHA License Number <span className="text-red-500 ml-0.5">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input placeholder="Enter CHA License Number" {...field} />
                 </FormControl>

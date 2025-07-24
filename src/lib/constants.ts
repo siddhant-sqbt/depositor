@@ -12,6 +12,7 @@ export const ROUTES = {
   E_EDIT: "/e/edit",
   E_PENDING: "/e/approval-pending",
 
+  LANDING: "/",
   LOGIN: "/login",
 };
 

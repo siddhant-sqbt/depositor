@@ -1,105 +1,177 @@
 import z from "zod";
 
-export const registerDepositorFormSchema = z.object({
-  panAvailable: z.enum(["yes", "no"], { message: "Select PAN availability" }),
-  panNumber: z.string().optional(),
-  tanNumber: z.string().optional(),
-  gstNumber: z.string().optional(),
-  aadhaarNumber: z.string().optional(),
+export const registerDepositorFormSchema = z
+  .object({
+    panAvailable: z.enum(["yes", "no"], { message: "Select PAN availability" }),
+    panNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(val), { message: "Invalid PAN format" }),
+    tanNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^[A-Z]{4}[0-9]{5}[A-Z]$/.test(val), { message: "Invalid TAN format" }),
+    gstNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(val), { message: "Invalid GST Number" }),
+    aadhaarNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^[0-9]{12}$/.test(val), { message: "Invalid Aadhaar Number" }),
 
-  partyType: z.string().min(1, "Party Type is required"),
-  subPartyType: z.string().min(1, "Sub Party Type is required"),
-  pinNumber: z.string().optional(),
-  name1: z.string().max(40).optional(),
-  name2: z.string().max(35).optional(),
-  name3: z.string().max(80).optional(),
-  address1: z.string().optional(),
-  address2: z.string().optional(),
-  address3: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  district: z.string().optional(),
+    partyType: z.string().min(1, "Party Type is required"),
+    subPartyType: z.string().min(1, "Sub Party Type is required"),
+    pinNumber: z.string().optional(),
+    name1: z.string().max(40).min(1, "Name is required"),
+    name2: z.string().max(35).optional(),
+    name3: z.string().max(80).optional(),
+    address1: z.string().min(1, "Address Line 1 is required"),
+    address2: z.string().optional(),
+    address3: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    district: z.string().optional(),
 
-  isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
-  iecNumber: z.string().optional(),
+    isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
+    iecNumber: z.string().optional(),
 
-  isCHA: z.enum(["Yes", "No"], { message: "Please choose CHA option" }),
-  chaLicenseNumber: z.string().optional(),
+    isCHA: z.enum(["Yes", "No"], { message: "Please choose CHA option" }),
+    chaLicenseNumber: z.string().optional(),
 
-  optionalFeatures: z.object({
-    forwarder: z.boolean().optional(),
-    consolid: z.boolean().optional(),
-    shippingLine: z.boolean().optional(),
-    transporter: z.boolean().optional(),
-    rent: z.boolean().optional(),
-    auction: z.boolean().optional(),
-  }),
+    optionalFeatures: z.object({
+      forwarder: z.boolean().optional(),
+      consolid: z.boolean().optional(),
+      shippingLine: z.boolean().optional(),
+      transporter: z.boolean().optional(),
+      rent: z.boolean().optional(),
+      auction: z.boolean().optional(),
+    }),
 
-  serviceSecondaryAddress: z.array(
-    z.object({
-      serviceBranchName: z.string().optional(),
-      serviceAddress1: z.string().optional(),
-      serviceAddress2: z.string().optional(),
-      serviceAddress3: z.string().optional(),
-      serviceState: z.string().optional(),
-      serviceDistrict: z.string().optional(),
-      serviceCity: z.string().optional(),
-      servicePincode: z.string().optional(),
-    })
-  ),
+    serviceSecondaryAddress: z.array(
+      z.object({
+        serviceBranchName: z.string().optional(),
+        serviceAddress1: z.string().optional(),
+        serviceAddress2: z.string().optional(),
+        serviceAddress3: z.string().optional(),
+        serviceState: z.string().optional(),
+        serviceDistrict: z.string().optional(),
+        serviceCity: z.string().optional(),
+        servicePincode: z.string().optional(),
+      })
+    ),
 
-  representative: z.array(
-    z.object({
-      repName: z.string().optional(),
-      repMobileNo: z.string().optional(),
-      repEmail: z.string().optional(),
-      repPosition: z.string().optional(),
-      repCreationDate: z.string().optional(),
-      repIsActivated: z.string().optional(),
-      repDeactivateDate: z.string().optional(),
-      repOtpVerified: z.string().optional(),
-    })
-  ),
+    representative: z.array(
+      z.object({
+        repName: z.string().optional(),
+        repMobileNo: z.string().optional(),
+        repEmail: z.string().optional(),
+        repPosition: z.string().optional(),
+        repCreationDate: z.string().optional(),
+        repIsActivated: z.string().optional(),
+        repDeactivateDate: z.string().optional(),
+        repOtpVerified: z.string().optional(),
+      })
+    ),
 
-  prefferedLocationDetails: z.object({
-    // warehouseType: z.string().min(1, "warehouse Type is required"),
-    warehouseType: z.string().optional(),
-    // warehouseState: z.string().min(1, "warehouse State is required"),
-    warehouseState: z.string().optional(),
-    // warehouseName: z.string().min(1, "warehouse Name is required"),
-    warehouseName: z.string().optional(),
-    customerBranchName: z.string().optional(),
-  }),
+    prefferedLocationDetails: z.object({
+      // warehouseType: z.string().min(1, "warehouse Type is required"),
+      warehouseType: z.string().optional(),
+      // warehouseState: z.string().min(1, "warehouse State is required"),
+      warehouseState: z.string().optional(),
+      // warehouseName: z.string().min(1, "warehouse Name is required"),
+      warehouseName: z.string().optional(),
+      customerBranchName: z.string().optional(),
+    }),
 
-  contactDetails: z.array(
-    z.object({
-      contactNo: z.string().optional(),
-      email: z.string().optional(),
-      contactPerson: z.string().optional(),
-      isPrimary: z.boolean().optional(),
-    })
-  ),
+    contactDetails: z.array(
+      z.object({
+        contactNo: z.string().optional(),
+        email: z.string().optional(),
+        contactPerson: z.string().optional(),
+        isPrimary: z.boolean().optional(),
+      })
+    ),
 
-  bankDetails: z.array(
-    z.object({
-      bankName: z.string().optional(),
-      accountHolderName: z.string().optional(),
-      ifscCode: z.string().optional(),
-      accountNo: z.string().optional(),
-      country: z.string().optional(),
-    })
-  ),
-  documents: z.object({
-    other: z.any().optional(),
-    letter: z.any().optional(),
-    panCard: z.any().optional(),
-    aadhaarCard: z.any().optional(),
-    tanDocument: z.any().optional(),
-    officeIdCard: z.any().optional(),
-    gstCertificate: z.any().optional(),
-    specimenSignature: z.any().optional(),
-  }),
-});
+    bankDetails: z.array(
+      z.object({
+        bankName: z.string().optional(),
+        accountHolderName: z.string().optional(),
+        ifscCode: z.string().optional(),
+        accountNo: z.string().optional(),
+        country: z.string().optional(),
+      })
+    ),
+    documents: z.object({
+      other: z.any().optional(),
+      letter: z.any().optional(),
+      panCard: z.any().optional(),
+      aadhaarCard: z.any().optional(),
+      tanDocument: z.any().optional(),
+      officeIdCard: z.any().optional(),
+      gstCertificate: z.any().optional(),
+      specimenSignature: z.any().optional(),
+      cancelledCheque: z.any().optional(),
+    }),
+  })
+  .superRefine((data, ctx) => {
+    const requirements = getFieldRequirements(data.panNumber ?? "");
+
+    if (data.panAvailable === "yes") {
+      if (!data.panNumber || data.panNumber.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "PAN number is required",
+          path: ["panNumber"],
+        });
+      }
+    }
+
+    if (requirements?.aadharRequired && (!data?.aadhaarNumber || data?.aadhaarNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Aadhaar number is required",
+        path: ["aadhaarNumber"],
+      });
+    }
+    if (requirements?.tanRequired && (!data?.tanNumber || data?.tanNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "TAN number is required",
+        path: ["tanNumber"],
+      });
+    }
+    if (requirements?.gstRequired && (!data?.gstNumber || data?.gstNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "GST number is required",
+        path: ["gstNumber"],
+      });
+    }
+    if (requirements?.aadharRequired && (!data?.aadhaarNumber || data?.aadhaarNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Aadhaar number is required",
+        path: ["aadhaarNumber"],
+      });
+    }
+
+    if (data?.isExporterImporter && (!data?.iecNumber || data?.iecNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "IEC number is required",
+        path: ["iecNumber"],
+      });
+    }
+
+    if (data?.isCHA && (!data?.chaLicenseNumber || data?.chaLicenseNumber?.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "CHA License number is required",
+        path: ["chaLicenseNumber"],
+      });
+    }
+  });
 // .refine(
 //   (data) => {
 //     // Skip validation if PAN is not available

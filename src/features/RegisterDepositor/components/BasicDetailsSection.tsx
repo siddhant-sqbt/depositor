@@ -60,7 +60,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="partyType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Party Type *</FormLabel>
+              <FormLabel>Party Type {getFieldRequiredStatus(registerDepositorFormSchema, "partyType") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -92,7 +92,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="subPartyType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Sub Party Type *</FormLabel>
+              <FormLabel>Sub Party Type {getFieldRequiredStatus(registerDepositorFormSchema, "subPartyType") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl className="w-full">
                   <SelectTrigger>
@@ -164,9 +164,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="name1"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Name 1 {getFieldRequiredStatus(registerDepositorFormSchema, "prefferedLocationDetails.warehouseState") && <span className="text-red-500 ml-1">*</span>}
-              </FormLabel>
+              <FormLabel>Name 1 {getFieldRequiredStatus(registerDepositorFormSchema, "name1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <FormControl>
                 <Input placeholder="First Name" {...field} />
               </FormControl>
@@ -211,7 +209,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="address1"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address Line 1 *</FormLabel>
+              <FormLabel>Address Line 1 {getFieldRequiredStatus(registerDepositorFormSchema, "address1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <FormControl>
                 <Input placeholder="Enter Address Line 1" {...field} />
               </FormControl>

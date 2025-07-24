@@ -1,12 +1,14 @@
 import FormCardHeading from "@/components/Common/FormCardHeading";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getFieldRequirements } from "@/lib/schema";
 import type { DocumentFormValues } from "@/lib/types";
-import { File } from "lucide-react";
+import { CircleCheck, File } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 
 const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panAvailable = form.watch("panAvailable");
@@ -31,6 +33,18 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
     form.setValue("aadhaarNumber", "");
     form.setValue("partyType", "");
     form.setValue("subPartyType", "");
+  };
+
+  const handleFieldsValidate = () => {
+    const promise = new Promise((resolve) => {
+      setTimeout(() => {
+        return resolve("Fields Validated Successfully!");
+      }, 2000);
+    });
+    toast.loading("validating Fields");
+    setTimeout(() => {
+      toast.success("Fields Validated succesfully!");
+    }, 1000);
   };
 
   const handleGstNumberChange = (gstNumber: string) => {
@@ -91,7 +105,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             name="panNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>PAN Number</FormLabel>
+                <FormLabel>PAN Number {panAvailable === "yes" && <span className="text-red-500 ml-1">*</span>}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter PAN Number"
@@ -196,6 +210,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                       placeholder={isRequired ? "Enter Aadhaar Number (Required)" : "Enter Aadhaar Number (Optional)"}
                       className={`${hasError ? "border-red-500 focus:border-red-500" : ""}`}
                       {...field}
+                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
@@ -203,6 +218,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
               );
             }}
           />
+
           {/* <FormField
             control={form.control}
             name="aadhaarNumber"
@@ -217,6 +233,9 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             )}
           /> */}
         </div>
+        <Button variant={"outline"} type="button" onClick={handleFieldsValidate} className="cursor-pointer mt-4 mx-auto">
+          <CircleCheck className="text-green-500" /> Validate
+        </Button>
       </CardContent>
     </Card>
   );

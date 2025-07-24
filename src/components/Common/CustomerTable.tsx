@@ -127,7 +127,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
   const { mutate: mutateDeleteForm, isPending: isRejectLoading } = useMutation({
     mutationFn: (id: string) => postDeleteForm(id),
     onSuccess: (res) => {
-      toast.success(`Depositor rejected! ${res?.req_number}`);
+      toast.info(`Depositor Deleted! ${res?.req_number}`);
       queryClient.invalidateQueries({
         queryKey: ["customer-table", actionType, actionFor],
       });
@@ -239,7 +239,7 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
         };
         return (
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={handleViewClick} size="icon" title="View" className="bg-green-100 hover:bg-green-200 border-none text-green-900">
+            <Button variant="outline" onClick={handleViewClick} size="icon" title="View" className="bg-green-100 hover:bg-green-200 border-none text-green-900 cursor-pointer">
               <Eye className="h-4 w-4" />
             </Button>
             {isEmployee ? (
@@ -257,17 +257,17 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
             <>
               {isDraft && (
                 <>
-                  <Button variant="outline" onClick={handleEditClick} size="icon" title="Approve" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700">
+                  <Button variant="outline" onClick={handleEditClick} size="icon" title="Edit" className="bg-blue-100 hover:bg-blue-200 border-none text-blue-700 cursor-pointer">
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    title="Reject"
+                    title="Delete"
                     onClick={() => {
                       mutateDeleteForm(row?.original?.req_number);
                     }}
-                    className="bg-red-100 hover:bg-red-200 border-none text-red-900"
+                    className="bg-red-100 hover:bg-red-200 border-none text-red-900 cursor-pointer"
                   >
                     <Trash className="h-4 w-4" />
                   </Button>

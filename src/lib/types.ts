@@ -72,4 +72,4 @@ export interface IAttachment {
   is_uploaded?: string;
 }
 
-export type IDocumentKeys = "other" | "letter" | "panCard" | "aadhaarCard" | "tanDocument" | "officeIdCard" | "gstCertificate" | "specimenSignature";
+export type IDocumentKeys = "other" | "letter" | "panCard" | "aadhaarCard" | "tanDocument" | "officeIdCard" | "gstCertificate" | "specimenSignature" | "cancelledCheque";

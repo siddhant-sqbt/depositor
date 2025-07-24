@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 // import Home from "./pages/Home";
 // import NotFound from "./pages/NotFound";
 import { HIDE_SIDEBAR_ROUTES, ROUTES } from "./lib/constants";
@@ -34,7 +34,9 @@ function App() {
         <SidebarProvider>
           {!isHidden && <AppSidebar />}
           <Routes>
+            <Route path={ROUTES?.LANDING} element={<Navigate to={ROUTES?.LOGIN} replace />} />
             <Route path={ROUTES?.LOGIN} element={<LoginPage />} />
+
             <Route path={ROUTES?.C_OVERVIEW} element={<CustomerOverview />} />
             <Route path={`${ROUTES?.C_VIEW}/:id`} element={<ViewRegisterDepositor />} />
             <Route path={`${ROUTES?.C_EDIT}/:id`} element={<EditRegisterDepositor />} />

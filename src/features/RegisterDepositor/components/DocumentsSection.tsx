@@ -22,6 +22,7 @@ const DOCUMENTS_LIST = [
   { key: "officeIdCard", label: "Office ID Card (Authorized Person)", required: true },
   { key: "letter", label: "Letter", required: false },
   { key: "specimenSignature", label: "Specimen Signature", required: true },
+  { key: "cancelledCheque", label: "Bank Details (Cancelled Cheque)", required: false },
   { key: "other", label: "Other", required: false },
 ] as const;
 
