@@ -18,6 +18,8 @@ import OverviewPage from "./pages/CustomerOverview";
 import EmpViewRegisterDepositor from "./pages/Employee/ViewRegisterDepositor";
 import EmpRegisterDepositorPage from "./pages/Employee/RegisterDepositor";
 import EditRegisterDepositor from "./pages/EditRegisterDepositor";
+import SSORedirectHandler from "./pages/SSO";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -36,17 +38,81 @@ function App() {
           <Routes>
             <Route path={ROUTES?.LANDING} element={<Navigate to={ROUTES?.LOGIN} replace />} />
             <Route path={ROUTES?.LOGIN} element={<LoginPage />} />
+            <Route path={ROUTES?.SSO} element={<SSORedirectHandler />} />
 
-            <Route path={ROUTES?.C_OVERVIEW} element={<CustomerOverview />} />
-            <Route path={`${ROUTES?.C_VIEW}/:id`} element={<ViewRegisterDepositor />} />
-            <Route path={`${ROUTES?.C_EDIT}/:id`} element={<EditRegisterDepositor />} />
-            <Route path={ROUTES?.C_REGISTER_DEPOSITOR} element={<RegisterDepositorPage />} />
+            <Route
+              path={ROUTES?.C_OVERVIEW}
+              element={
+                <ProtectedRoute isEmployee={false}>
+                  <CustomerOverview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={`${ROUTES?.C_VIEW}/:id`}
+              element={
+                <ProtectedRoute isEmployee={false}>
+                  <ViewRegisterDepositor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={`${ROUTES?.C_EDIT}/:id`}
+              element={
+                <ProtectedRoute isEmployee={false}>
+                  <EditRegisterDepositor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES?.C_REGISTER_DEPOSITOR}
+              element={
+                <ProtectedRoute isEmployee={false}>
+                  <RegisterDepositorPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path={ROUTES?.E_PENDING} element={<EmpPendingPage />} />
-            <Route path={ROUTES?.E_OVERVIEW} element={<OverviewPage />} />
-            <Route path={`${ROUTES?.E_VIEW}/:id`} element={<EmpViewRegisterDepositor />} />
-            <Route path={`${ROUTES?.E_EDIT}/:id`} element={<EditRegisterDepositor />} />
-            <Route path={ROUTES?.E_REGISTER_DEPOSITOR} element={<EmpRegisterDepositorPage />} />
+            <Route
+              path={ROUTES?.E_PENDING}
+              element={
+                <ProtectedRoute isEmployee>
+                  <EmpPendingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES?.E_OVERVIEW}
+              element={
+                <ProtectedRoute isEmployee>
+                  <OverviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={`${ROUTES?.E_VIEW}/:id`}
+              element={
+                <ProtectedRoute isEmployee>
+                  <EmpViewRegisterDepositor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={`${ROUTES?.E_EDIT}/:id`}
+              element={
+                <ProtectedRoute isEmployee>
+                  <EditRegisterDepositor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES?.E_REGISTER_DEPOSITOR}
+              element={
+                <ProtectedRoute isEmployee>
+                  <EmpRegisterDepositorPage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>

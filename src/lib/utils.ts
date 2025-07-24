@@ -55,7 +55,6 @@ export const buildAttachments = async (documents: Record<string, FileList | unde
       });
     }
   }
-  console.log("attachments: ", attachments);
   return attachments;
 };
 

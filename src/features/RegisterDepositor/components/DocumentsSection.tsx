@@ -66,7 +66,7 @@ export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentForm
         downloadBase64File(res);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -76,7 +76,7 @@ export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentForm
       form.setValue(`documents.${key as IDocumentKeys}`, []);
       toast.success("File deleted successfully");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

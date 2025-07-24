@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import z from "zod";
 
 export const registerDepositorFormSchema = z
@@ -171,6 +172,34 @@ export const registerDepositorFormSchema = z
         path: ["chaLicenseNumber"],
       });
     }
+
+    // Check PAN Card validation
+    if (data.panNumber && data?.documents?.panCard?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "PAN Card document is required when PAN number is provided",
+        path: ["documents.panCard"],
+      });
+    }
+
+    // Check Aadhaar Card validation
+    if (data.aadhaarNumber && data?.documents?.aadhaarCard?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Aadhaar Card document is required when Aadhaar number is provided",
+        path: ["documents.aadhaarCard"],
+      });
+    }
+
+    // Check GST Certificate validation
+    // if (data?.gstNumber && data?.documents?.gstCertificate?.length === 0) {
+    //   toast.error("GST Certificate document is required when GST number is provided");
+    // }
+
+    // // Check TAN Document validation
+    // if (data.tanNumber && data?.documents?.tanDocument?.length === 0) {
+    //   toast.error("TAN Document is required when TAN number is provided");
+    // }
   });
 // .refine(
 //   (data) => {
@@ -293,4 +322,12 @@ export const loginSchema = z.object({
   userRole: z.enum(["customer", "employee"], { message: "Select User Role" }),
   username: z.string().optional(),
   password: z.string().optional(),
+});
+
+export const phoneLoginSchema = z.object({
+  userRole: z.enum(["customer", "employee"], {
+    message: "Please select a user role",
+  }),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  otp: z.string().min(6, "OTP must be 6 digits").max(6, "OTP must be 6 digits"),
 });

@@ -1,5 +1,5 @@
 import type z from "zod";
-import type { loginSchema, registerDepositorFormSchema } from "./schema";
+import type { loginSchema, phoneLoginSchema, registerDepositorFormSchema } from "./schema";
 
 export type DocumentFormValues = z.infer<typeof registerDepositorFormSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
@@ -72,4 +72,11 @@ export interface IAttachment {
   is_uploaded?: string;
 }
 
+export interface IVerifyOTPPayload {
+  otp: string;
+  mob_number: string;
+}
+
 export type IDocumentKeys = "other" | "letter" | "panCard" | "aadhaarCard" | "tanDocument" | "officeIdCard" | "gstCertificate" | "specimenSignature" | "cancelledCheque";
+
+export type PhoneLoginFormValues = z.infer<typeof phoneLoginSchema>;

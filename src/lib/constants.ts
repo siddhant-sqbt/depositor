@@ -14,6 +14,7 @@ export const ROUTES = {
 
   LANDING: "/",
   LOGIN: "/login",
+  SSO: "/sso",
 };
 
 export const API_ENDPOINTS = {
@@ -28,6 +29,9 @@ export const API_ENDPOINTS = {
   DELETE_FORM: "/delete_mdm_data",
   GET_ATTACHMENT: "/get_attachment",
   DELETE_ATTACHMENT: "/delete_attachment",
+  GENERATE_OTP: "/generate_otp",
+  VALIDATE_OTP: "/validate_otp",
+  SSO_LOGIN: "/login/employee",
 };
 
 // ist_mdm_data?action_type=9876543210&action_for=CO&page=1&limit=10

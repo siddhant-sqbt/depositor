@@ -52,7 +52,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           const docs = buildDocumentsFromAttachments(data?.attachments);
           delete data?.["attachments"];
           data.documents = docs;
-          console.log("Data: ", data);
           return data;
         } catch (err) {
           toast.error(JSON.stringify(err));
@@ -272,8 +271,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
     },
   });
 
-  console.log("error", form?.formState.errors);
-
   const { mutate: mutateRejectForm, isPending: isRejectLoading } = useMutation({
     mutationFn: (id: string) => postRejectForm({ user_id: STATIC_EMP_NO, remarks: "" }, id),
     onSuccess: (res) => {
@@ -418,9 +415,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
       </div>
     );
   }
-
-  // console.log("form errors", form.formState.errors); // <- watch this in dev tools
-  // console.log("form values", form.getValues().documents); // <- watch this in dev tools
 
   return (
     <Form {...form}>

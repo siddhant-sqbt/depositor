@@ -17,7 +17,6 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
 
   const handlePanNumberChange = () => {
     console.log("PAN Number onChange triggered");
-
     form.setValue("tanNumber", "");
     form.setValue("gstNumber", "");
     form.setValue("aadhaarNumber", "");
