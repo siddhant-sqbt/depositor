@@ -35,15 +35,6 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUserRole: (state, action: PayloadAction<"E" | "C" | null>) => {
-      state.userRole = action.payload;
-    },
-    setPhoneNumber: (state, action: PayloadAction<string>) => {
-      state.phoneNumber = action.payload;
-    },
-    setAuthToken: (state, action: PayloadAction<string>) => {
-      state.authToken = action.payload;
-    },
     setAuthField: (state, action: PayloadAction<{ key: keyof AuthState; value: any }>) => {
       const { key, value } = action.payload;
       state[key] = value;

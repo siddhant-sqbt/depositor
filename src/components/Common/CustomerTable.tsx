@@ -25,6 +25,8 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 // /generate_otp mobile POST
 // validate_otp otp mob_number POST
@@ -109,7 +111,10 @@ export function CustomerTable({ isPendingPage }: { isPendingPage?: boolean }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const { userRole } = useSelector((state: RootState) => state.auth);
+  const isEmployee = userRole === "E";
+
+  // const isEmployee = localStorage?.getItem("ROLE") === "E";
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);

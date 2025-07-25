@@ -7,12 +7,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getStatesList, getStateWiseNameList } from "@/lib/apis/apis";
 import { WAREHOUSE_TYPES } from "@/lib/constants";
 import type { DocumentFormValues, IWarehouseLabel, IWarehouseNameOption } from "@/lib/types";
+import type { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { type UseFormReturn } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
-  const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const { userRole } = useSelector((state: RootState) => state.auth);
+  const isEmployee = userRole === "E";
+  // const isEmployee = localStorage?.getItem("ROLE") === "E";
   const selectedType = form.watch("prefferedLocationDetails.warehouseType") || "";
   const selectedState = form.watch("prefferedLocationDetails.warehouseState") || "";
 

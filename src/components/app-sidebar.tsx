@@ -1,10 +1,13 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/constants";
+import type { RootState } from "@/store/store";
 import { Home, ListTodo, LogOut, UserPlus } from "lucide-react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export function AppSidebar() {
-  const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const { userRole } = useSelector((state: RootState) => state.auth);
+  const isEmployee = userRole === "E";
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -71,7 +74,7 @@ export function AppSidebar() {
                         <span>{item.title}</span>
                       </button>
                     ) : (
-                      <a href={item?.url} className="flex items-center gap-2">
+                      <a onClick={() => navigate(item?.url)} className="flex items-center gap-2">
                         <item.icon />
                         <span>{item.title}</span>
                       </a>

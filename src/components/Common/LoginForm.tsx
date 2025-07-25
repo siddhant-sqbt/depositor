@@ -56,8 +56,10 @@ const LoginFormSection = () => {
   const { mutate: mutateVerifyOTP, isPending: isVerifyingOTP } = useMutation({
     mutationFn: (data: IVerifyOTPPayload) => postVerifyOTP(data),
     onSuccess: async (data) => {
-      toast.success("OTP sent successfully!");
-      await dispatch(setAuthField({ key: "userRole", value: "E" }));
+      // toast.success("OTP sent successfully!");
+      // localStorage.setItem('userRole', 'C')
+
+      await dispatch(setAuthField({ key: "userRole", value: "C" }));
       await dispatch(setAuthField({ key: "phoneNumber", value: data?.mobile }));
       navigate(ROUTES?.C_OVERVIEW);
     },

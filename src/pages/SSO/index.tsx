@@ -15,6 +15,9 @@ const SSORedirectHandler = () => {
     const token = params.get("token");
     if (token) {
       const user = jwtDecode(token);
+      // localStorage.setItem("employeeData", user);
+      // localStorage.setItem("userRole", "E");
+      // localStorage.setItem("authToken", token);
       dispatch(setAuthField({ key: "employeeData", value: user }));
       dispatch(setAuthField({ key: "userRole", value: "E" }));
       dispatch(setAuthField({ key: "authToken", value: token }));
