@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/constants";
-import type { RootState } from "@/store/store";
+import { persistor, type RootState } from "@/store/store";
 import { Home, ListTodo, LogOut, UserPlus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ export function AppSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    persistor.purge();
     localStorage.clear();
     navigate(ROUTES?.LOGIN);
   };
