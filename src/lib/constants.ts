@@ -412,6 +412,10 @@ export const STATE_34_PINCODE_RANGE = [
   [609000, 609999],
 ];
 
+export const isPincodeInState34 = (pincode: number): boolean => {
+  return STATE_34_PINCODE_RANGE.some(([start, end]) => pincode >= start && pincode <= end);
+};
+
 export const REGISTER_DEFAULT_VALUES = {
   panAvailable: "Yes",
   panNumber: "",
@@ -450,7 +454,7 @@ export const STATUS_MATRIX = {
 };
 
 export const WAREHOUSE_TYPES = [
+  { value: "WO", label: "WH" },
   { value: "RO", label: "RO" },
   { value: "CO", label: "CO" },
-  { value: "WO", label: "Warehouse" },
 ];

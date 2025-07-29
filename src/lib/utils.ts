@@ -68,26 +68,19 @@ export const buildDocumentsFromAttachments = (attachments: IAttachment[]) => {
   return documents;
 };
 
-export const downloadBase64File = ({ base64_data, file_name, file_type }: { base64_data: string; file_name: string; file_type: string }) => {
-  const linkSource = `data:${file_type};base64,${base64_data}`;
+export const downloadFile = ({ link_path, file_name }: { link_path: string; file_name: string }) => {
   const downloadLink = document.createElement("a");
-  downloadLink.href = linkSource;
+  downloadLink.href = link_path;
   downloadLink.download = file_name;
+  downloadLink.target = "_blank";
+  document.body.appendChild(downloadLink);
   downloadLink.click();
+  document.body.removeChild(downloadLink);
 };
 
-export const openBase64File = ({ base64_data, file_name, file_type }: { base64_data: string; file_name: string; file_type: string }) => {
-  const linkSource = `data:${file_type};base64,${base64_data}`;
-  const downloadLink = document.createElement("a");
-
-  // Optional: open in new tab
-  const newTab = window.open();
-  if (newTab) {
-    newTab.document.write(`<iframe src="${linkSource}" frameborder="0" style="width:100%;height:100%;"></iframe>`);
-  } else {
-    // Fallback: trigger download
-    downloadLink.href = linkSource;
-    downloadLink.download = file_name;
-    downloadLink.click();
+export const openFileInNewTab = ({ file_path }: { file_path: string }) => {
+  const newTab = window.open(file_path, "_blank");
+  if (!newTab) {
+    alert("Please allow popups for this site to view the file.");
   }
 };

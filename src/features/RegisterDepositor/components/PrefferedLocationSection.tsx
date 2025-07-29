@@ -45,7 +45,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
           <div className="grow flex flex-row justify-between items-center">
             <div className="flex gap-2">
               <MapPin />
-              Preffered Location
+              Preferred Location for KYC
             </div>
           </div>
         }
@@ -92,7 +92,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
               render={({ field }) => (
                 <FormItem>
                   <FormItem className="flex items-center space-x-2">
-                    <FormLabel className="">Warehouse State</FormLabel>
+                    <FormLabel className="">Warehouse/RO/CO State</FormLabel>
                   </FormItem>
                   <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType}>
                     <FormControl className="w-full">
@@ -124,7 +124,7 @@ const PrefferedLocationSection = ({ form }: { form: UseFormReturn<DocumentFormVa
               render={({ field }) => (
                 <FormItem>
                   <FormItem className="flex items-center space-x-2">
-                    <FormLabel className="">Warehouse Name</FormLabel>
+                    <FormLabel className="">Warehouse/RO/CO Name</FormLabel>
                   </FormItem>
                   <Select onValueChange={field.onChange} value={field.value} disabled={!selectedType || !selectedState}>
                     <FormControl className="w-full">

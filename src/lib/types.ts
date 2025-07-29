@@ -77,6 +77,17 @@ export interface IVerifyOTPPayload {
   mob_number: string;
 }
 
-export type IDocumentKeys = "other" | "letter" | "panCard" | "aadhaarCard" | "tanDocument" | "officeIdCard" | "gstCertificate" | "specimenSignature" | "cancelledCheque";
+export type IDocumentKeys =
+  | "other"
+  | "letter"
+  | "panCard"
+  | "aadhaarCard"
+  | "tanDocument"
+  | "officeIdCard"
+  | "gstCertificate"
+  | "specimenSignature"
+  | "cancelledCheque"
+  | "iecDocument"
+  | "chaLicense";
 
 export type PhoneLoginFormValues = z.infer<typeof phoneLoginSchema>;

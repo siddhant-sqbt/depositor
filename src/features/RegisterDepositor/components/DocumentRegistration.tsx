@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const panAvailable = form.watch("panAvailable");
+  const partyType = form.watch("partyType");
   const panNumber = form.watch("panNumber");
   const requirements = getFieldRequirements(panNumber ?? "");
 
@@ -74,6 +75,7 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                 <RadioGroup
                   onValueChange={(value) => {
                     field.onChange(value);
+                    form.clearErrors();
                     handlePanAvailableChange();
                   }}
                   value={field.value}
@@ -97,29 +99,32 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-4 gap-3 mt-4">
-          {/* PAN No */}
-          <FormField
-            control={form.control}
-            name="panNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>PAN Number {panAvailable === "yes" && <span className="text-red-500 ml-1">*</span>}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter PAN Number"
-                    disabled={panAvailable !== "yes"}
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handlePanNumberChange();
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* PAN No */}
+        <div className={`grid ${panAvailable === "yes" ? "grid-cols-4" : "grid-cols-3"} gap-3 mt-4`}>
+          {panAvailable === "yes" && (
+            <FormField
+              control={form.control}
+              name="panNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>PAN Number {panAvailable === "yes" && <span className="text-red-500 ml-1">*</span>}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter PAN Number"
+                      disabled={panAvailable !== "yes"}
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.clearErrors();
+                        handlePanNumberChange();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {/* TAN No */}
           <FormField
@@ -184,18 +189,19 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
             name="aadhaarNumber"
             render={({ field, fieldState }) => {
               const isDisabled = requirements?.aadharDisabled;
-              const isRequired = panAvailable === "yes" && requirements?.aadharRequired;
+              const isRequired = (panAvailable === "yes" && requirements?.aadharRequired) || (panAvailable === "no" && partyType === "Individual");
               const hasError = fieldState.error;
 
               if (isDisabled) {
-                return (
-                  <FormItem>
-                    <FormLabel className="text-gray-400">Aadhaar Number (Not Required)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Aadhaar Number not required" disabled {...field} />
-                    </FormControl>
-                  </FormItem>
-                );
+                return <></>;
+                // return (
+                //   <FormItem>
+                //     <FormLabel className="text-gray-400">Aadhaar Number (Not Required)</FormLabel>
+                //     <FormControl>
+                //       <Input placeholder="Aadhaar Number not required" disabled {...field} />
+                //     </FormControl>
+                //   </FormItem>
+                // );
               }
 
               return (
@@ -207,9 +213,21 @@ const DocumentRegistration = ({ form }: { form: UseFormReturn<DocumentFormValues
                   <FormControl>
                     <Input
                       placeholder={isRequired ? "Enter Aadhaar Number (Required)" : "Enter Aadhaar Number (Optional)"}
-                      className={`${hasError ? "border-red-500 focus:border-red-500" : ""}`}
+                      className={`${
+                        hasError ? "border-red-500 focus:border-red-500" : ""
+                      } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                       {...field}
                       type="number"
+                      onKeyDown={(e) => {
+                        if (["e", "E", "+", "-"].includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onInput={(e) => {
+                        if (e.currentTarget.value.length > 12) {
+                          e.currentTarget.value = e.currentTarget.value.slice(0, 12);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

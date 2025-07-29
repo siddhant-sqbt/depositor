@@ -2,7 +2,7 @@ import { useFormContext, type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { cn, downloadBase64File, openBase64File } from "@/lib/utils";
+import { cn, downloadFile, openFileInNewTab } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import type { DocumentFormValues, IAPIErrorResponse, IDocumentKeys } from "@/lib/types";
 import { useLocation, useParams } from "react-router-dom";
@@ -12,19 +12,8 @@ import { deleteAttachment, getAttachment } from "@/lib/apis/apis";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
+import { getFieldRequirements } from "@/lib/schema";
 // import { useLocation } from "react-router-dom";
-
-const DOCUMENTS_LIST = [
-  { key: "panCard", label: "PAN Card", required: true },
-  { key: "aadhaarCard", label: "Aadhaar Card", required: true },
-  { key: "gstCertificate", label: "GST Certificate", required: false },
-  { key: "tanDocument", label: "TAN Document", required: false },
-  { key: "officeIdCard", label: "Office ID Card (Authorized Person)", required: true },
-  { key: "letter", label: "Letter", required: false },
-  { key: "specimenSignature", label: "Specimen Signature", required: true },
-  { key: "cancelledCheque", label: "Bank Details (Cancelled Cheque)", required: false },
-  { key: "other", label: "Other", required: false },
-] as const;
 
 export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentFormValues> }) => {
   const location = useLocation();
@@ -34,11 +23,32 @@ export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentForm
   const isView = subpaths?.includes("view");
   const isEdit = subpaths?.includes("edit");
 
+  const panAvailable = form.watch("panAvailable");
+  const partyType = form.watch("partyType");
+  const isCHAChecked = form.watch("isCHA");
+  const isIECChecked = form.watch("isExporterImporter");
+  const panNumber = form.watch("panNumber");
+  const requirements = getFieldRequirements(panNumber ?? "");
+
   const {
     register,
     watch,
     formState: { errors },
   } = useFormContext<DocumentFormValues>();
+
+  const DOCUMENTS_LIST = [
+    { key: "panCard", label: "PAN Card", required: panAvailable === "yes" },
+    { key: "tanDocument", label: "TAN Document", required: panAvailable === "yes" && requirements?.tanRequired },
+    { key: "gstCertificate", label: "GST Certificate", required: panAvailable === "yes" && requirements?.gstRequired },
+    { key: "aadhaarCard", label: "Aadhaar Card", required: (panAvailable === "yes" && requirements?.aadharRequired) || (panAvailable === "no" && partyType === "Individual") },
+    { key: "officeIdCard", label: "Office ID Card (Authorized Person)", required: false },
+    { key: "letter", label: "Letter of Authorization", required: false },
+    { key: "specimenSignature", label: "Specimen Signature", required: false },
+    { key: "cancelledCheque", label: "Bank Details (Cancelled Cheque)", required: false },
+    { key: "iecDocument", label: "IEC Document", required: isIECChecked === "Yes" },
+    { key: "chaLicense", label: "CHA License", required: isCHAChecked === "Yes" },
+    { key: "other", label: "Other", required: false },
+  ] as const;
 
   const { mutateAsync: mutateApproveForm, isPending: isApproveLoading } = useMutation({
     mutationFn: (file_key: string) => getAttachment(id ?? "", file_key),
@@ -61,9 +71,9 @@ export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentForm
     try {
       const res = await mutateApproveForm(key);
       if (isView) {
-        openBase64File(res);
+        openFileInNewTab(res);
       } else {
-        downloadBase64File(res);
+        downloadFile(res);
       }
     } catch (err) {
       console.error(err);
@@ -156,8 +166,16 @@ export const DocumentUploadTable = ({ form }: { form: UseFormReturn<DocumentForm
               {DOCUMENTS_LIST?.map((doc) => (
                 <TableRow key={doc?.key}>
                   <TableCell className="font-medium">
-                    {doc.label}
-                    {doc.required && <span className="text-red-500 ml-1">*</span>}
+                    {doc?.label}
+                    {doc?.required && <span className="text-red-500 ml-1">*</span>}
+                    {doc?.key === "specimenSignature" && (
+                      <div className="font-normal">
+                        Sample Signature Format{" "}
+                        <a rel="stylesheet" href="/sample.pdf" target="_blank" download className="underline text-blue-400">
+                          sample-signature-format.pdf
+                        </a>
+                      </div>
+                    )}
                   </TableCell>
                   {/* <TableCell>
                     <Input

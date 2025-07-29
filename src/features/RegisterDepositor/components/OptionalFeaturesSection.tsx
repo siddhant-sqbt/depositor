@@ -12,7 +12,7 @@ const OptionalFeaturesSection = ({ form }: { form: UseFormReturn<DocumentFormVal
       <FormCardHeading
         title={
           <>
-            <Cog /> Optional Features
+            <Cog /> Optional Features for CFS/ICD
           </>
         }
       />

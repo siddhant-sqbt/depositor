@@ -41,14 +41,17 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
               <TableHead className="w-[200px]">Contact No</TableHead>
               <TableHead className="w-[250px]">Email</TableHead>
               <TableHead className="w-[200px]">Contact Person</TableHead>
+              <TableHead className="w-[200px]">Contact Position</TableHead>
               <TableHead className="w-[100px] text-center">Primary</TableHead>
+              <TableHead className="w-[100px] text-center">SMS</TableHead>
+              <TableHead className="w-[100px] text-center">Email</TableHead>
               <TableHead className="w-[80px] text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {contactFields.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                   No contact details added. Click the + button to add a contact.
                 </TableCell>
               </TableRow>
@@ -64,6 +67,9 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
                   <TableCell className="p-2">
                     <Input placeholder="Contact Person" {...register(`contactDetails.${index}.contactPerson`)} />
                   </TableCell>
+                  <TableCell className="p-2">
+                    <Input placeholder="Contact Position" {...register(`contactDetails.${index}.contactPosition`)} />
+                  </TableCell>
                   <TableCell className="text-center p-2">
                     <input
                       type="radio"
@@ -72,19 +78,37 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
                       onChange={() => {
                         contactFields.forEach((_, i) => setValue(`contactDetails.${i}.isPrimary`, i === index));
                       }}
-                      className="w-4 h-4"
+                      className="w-4 h-4 cursor-pointer"
                     />
                   </TableCell>
                   <TableCell className="text-center p-2">
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => removeContact(index)}
-                      disabled={contactFields?.length === 1}
-                      className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    <input
+                      type="radio"
+                      name="sms"
+                      checked={watch(`contactDetails.${index}.primarySms`)}
+                      onChange={() => {
+                        contactFields.forEach((_, i) => setValue(`contactDetails.${i}.primarySms`, i === index));
+                      }}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center p-2">
+                    <input
+                      type="radio"
+                      name="email"
+                      checked={watch(`contactDetails.${index}.primaryEmail`)}
+                      onChange={() => {
+                        contactFields.forEach((_, i) => setValue(`contactDetails.${i}.primaryEmail`, i === index));
+                      }}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center p-2">
+                    {index !== 0 && (
+                      <Button variant="destructive" size="icon" onClick={() => removeContact(index)} className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed">
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

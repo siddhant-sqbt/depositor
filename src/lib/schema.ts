@@ -1,5 +1,7 @@
 import { toast } from "sonner";
 import z from "zod";
+import { isPincodeInState34, STATE_PINCODE_OPTIONS } from "./constants";
+import type { IStateObject } from "./types";
 
 export const registerDepositorFormSchema = z
   .object({
@@ -15,7 +17,7 @@ export const registerDepositorFormSchema = z
     gstNumber: z
       .string()
       .optional()
-      .refine((val) => !val || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(val), { message: "Invalid GST Number" }),
+      .refine((val) => !val || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9]{1}Z[0-9A-Z]{1}$/.test(val), { message: "Invalid GST Number" }),
     aadhaarNumber: z
       .string()
       .optional()
@@ -39,6 +41,7 @@ export const registerDepositorFormSchema = z
 
     isCHA: z.enum(["Yes", "No"], { message: "Please choose CHA option" }),
     chaLicenseNumber: z.string().optional(),
+    chaValidityDate: z.string().optional(),
 
     optionalFeatures: z.object({
       forwarder: z.boolean().optional(),
@@ -90,7 +93,10 @@ export const registerDepositorFormSchema = z
         contactNo: z.string().optional(),
         email: z.string().optional(),
         contactPerson: z.string().optional(),
+        contactPosition: z.string().optional(),
         isPrimary: z.boolean().optional(),
+        primaryEmail: z.boolean().optional(),
+        primarySms: z.boolean().optional(),
       })
     ),
 
@@ -113,6 +119,8 @@ export const registerDepositorFormSchema = z
       gstCertificate: z.any().optional(),
       specimenSignature: z.any().optional(),
       cancelledCheque: z.any().optional(),
+      iecDocument: z.any().optional(),
+      chaLicense: z.any().optional(),
     }),
   })
   .superRefine((data, ctx) => {
@@ -128,7 +136,7 @@ export const registerDepositorFormSchema = z
       }
     }
 
-    if (requirements?.aadharRequired && (!data?.aadhaarNumber || data?.aadhaarNumber?.trim() === "")) {
+    if ((requirements?.aadharRequired || (data?.panAvailable === "no" && data?.partyType === "Individual")) && (!data?.aadhaarNumber || data?.aadhaarNumber?.trim() === "")) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Aadhaar number is required",
@@ -157,20 +165,43 @@ export const registerDepositorFormSchema = z
       });
     }
 
-    if (data?.isExporterImporter && (!data?.iecNumber || data?.iecNumber?.trim() === "")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "IEC number is required",
-        path: ["iecNumber"],
-      });
+    if (data?.isExporterImporter === "Yes") {
+      if (!data?.iecNumber || data?.iecNumber?.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "IEC number is required",
+          path: ["iecNumber"],
+        });
+      } else if (data?.documents?.iecDocument?.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "IEC Document is required",
+          path: ["documents.iecDocument"],
+        });
+      }
     }
 
-    if (data?.isCHA && (!data?.chaLicenseNumber || data?.chaLicenseNumber?.trim() === "")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "CHA License number is required",
-        path: ["chaLicenseNumber"],
-      });
+    if (data?.isCHA === "Yes") {
+      if (!data?.chaLicenseNumber || data?.chaLicenseNumber?.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CHA License is required",
+          path: ["chaLicenseNumber"],
+        });
+      } else if (data?.documents?.chaLicense?.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CHA License number is required",
+          path: ["documents.chaLicense"],
+        });
+      }
+      if (!data?.chaValidityDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CHA Validity Date is required",
+          path: ["chaLicenseNumber"],
+        });
+      }
     }
 
     // Check PAN Card validation
@@ -192,105 +223,56 @@ export const registerDepositorFormSchema = z
     }
 
     // Check GST Certificate validation
-    // if (data?.gstNumber && data?.documents?.gstCertificate?.length === 0) {
-    //   toast.error("GST Certificate document is required when GST number is provided");
-    // }
+    if (data?.gstNumber && data?.documents?.gstCertificate?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Aadhaar Card document is required when Aadhaar number is provided",
+        path: ["documents.gstCertificate"],
+      });
+    }
 
-    // // Check TAN Document validation
-    // if (data.tanNumber && data?.documents?.tanDocument?.length === 0) {
-    //   toast.error("TAN Document is required when TAN number is provided");
-    // }
+    // Check TAN Document validation
+    if (data.tanNumber && data?.documents?.tanDocument?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Aadhaar Card document is required when Aadhaar number is provided",
+        path: ["documents.tanDocument"],
+      });
+    }
+
+    // Check PAN Card validation
+    if (data.panNumber && data?.documents?.panCard?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "PAN Card document is required when PAN number is provided",
+        path: ["documents.panCard"],
+      });
+    }
+
+    if (data?.state && !!data?.pinNumber) {
+      const pincode = Number(data?.pinNumber);
+      if (Number(data?.state) === 34) {
+        if (!isPincodeInState34(pincode)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Invalid Pincode",
+            path: ["pinNumber"],
+          });
+        }
+      } else {
+        const selectedState = STATE_PINCODE_OPTIONS?.find((state) => state.value === Number(data?.state));
+        if (selectedState) {
+          if (pincode < (selectedState?.minPincode as number) || pincode > (selectedState?.maxPincode as number)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Invalid Pincode",
+              path: ["pinNumber"],
+            });
+          }
+        }
+      }
+    }
   });
-// .refine(
-//   (data) => {
-//     // Skip validation if PAN is not available
-//     if (data.panAvailable === "no") {
-//       return true;
-//     }
-
-//     // Skip validation if PAN number is not provided
-//     if (!data.panNumber || data.panNumber.length < 4) {
-//       return true;
-//     }
-
-//     // Get the 4th character of PAN
-//     const pan4thDigit = data.panNumber[3].toUpperCase();
-
-//     // Define validation rules based on PAN 4th digit
-//     const validationRules = {
-//       P: { panRequired: true, gstRequired: false, tanRequired: false }, // ZIND
-//       F: { panRequired: true, gstRequired: false, tanRequired: false }, // ZLLP
-//       C: { panRequired: true, gstRequired: true, tanRequired: true }, // ZCOM
-//       G: { panRequired: false, gstRequired: false, tanRequired: false }, // ZGOV
-//       A: { panRequired: true, gstRequired: true, tanRequired: true }, // ZAOP
-//       B: { panRequired: true, gstRequired: true, tanRequired: true }, // ZBOI
-//       T: { panRequired: true, gstRequired: true, tanRequired: true }, // ZTRU
-//       L: { panRequired: true, gstRequired: true, tanRequired: true }, // ZLOC
-//       J: { panRequired: true, gstRequired: true, tanRequired: true }, // ZART
-//       H: { panRequired: true, gstRequired: false, tanRequired: false }, // Others
-//     };
-
-//     type PanFourthChar = keyof typeof validationRules;
-
-//     const rule = validationRules[pan4thDigit as PanFourthChar];
-
-//     // If no specific rule found, use default validation
-//     if (!rule) {
-//       return true;
-//     }
-
-//     // Validate GST requirement
-//     if (rule.gstRequired && (!data.gstNumber || data.gstNumber.trim() === "")) {
-//       return false;
-//     }
-
-//     // Validate TAN requirement
-//     if (rule.tanRequired && (!data.tanNumber || data.tanNumber.trim() === "")) {
-//       return false;
-//     }
-
-//     return true;
-//   },
-//   {
-//     message: "Required fields are missing based on PAN type",
-//     path: ["panNumber"], // This will show the error on the panNumber field
-//   }
-// )
-// .refine(
-//   (data) => {
-//     if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
-//       const pan4thDigit = data.panNumber[3].toUpperCase();
-//       const gstRequiredTypes = ["C", "A", "B", "T", "L", "J"];
-
-//       if (gstRequiredTypes.includes(pan4thDigit) && (!data.gstNumber || data.gstNumber.trim() === "")) {
-//         return false;
-//       }
-//     }
-//     return true;
-//   },
-//   {
-//     message: "GST Number is required for this PAN type",
-//     path: ["gstNumber"],
-//   }
-// )
-// .refine(
-//   (data) => {
-//     // Custom error messages for TAN
-//     if (data.panAvailable === "yes" && data.panNumber && data.panNumber.length >= 4) {
-//       const pan4thDigit = data.panNumber[3].toUpperCase();
-//       const tanRequiredTypes = ["C", "A", "B", "T", "L", "J"];
-
-//       if (tanRequiredTypes.includes(pan4thDigit) && (!data.tanNumber || data.tanNumber.trim() === "")) {
-//         return false;
-//       }
-//     }
-//     return true;
-//   },
-//   {
-//     message: "TAN Number is required for this PAN type",
-//     path: ["tanNumber"],
-//   }
-// );
 
 // Helper function to get field requirements based on PAN
 export const getFieldRequirements = (panNumber: string) => {

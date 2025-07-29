@@ -339,27 +339,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   //   }
   // };
 
-  const validateDocuments = (data: DocumentFormValues) => {
-    // Check PAN Card validation
-    if (data.panNumber && data?.documents?.panCard?.length === 0) {
-      toast.error("PAN Card document is required when PAN number is provided");
-    }
-
-    // Check Aadhaar Card validation
-    if (data.aadhaarNumber && data?.documents?.aadhaarCard?.length === 0) {
-      toast.error("Aadhaar Card document is required when Aadhaar number is provided");
-    }
-
-    // Check GST Certificate validation
-    if (data?.gstNumber && data?.documents?.gstCertificate?.length === 0) {
-      toast.error("GST Certificate document is required when GST number is provided");
-    }
-
-    // Check TAN Document validation
-    if (data.tanNumber && data?.documents?.tanDocument?.length === 0) {
-      toast.error("TAN Document is required when TAN number is provided");
-    }
-  };
+  console.log("errors", form.formState.errors);
 
   const onSubmit = async (data: DocumentFormValues, event?: BaseSyntheticEvent) => {
     const jsonData: any = data;
@@ -384,8 +364,6 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
       attachments: attachments,
     };
 
-    // validatePincode(data);
-    validateDocuments(data);
     try {
       setIsLoading(true);
       let res;
@@ -432,7 +410,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             <OptionalFeaturesSection form={form} />
             <ContactDetailsSection form={form} />
             <ServiceSecondarySection form={form} />
-            <RepresentativeSection form={form} />
+            {isEmployee && <RepresentativeSection form={form} />}
             <BankDetailsSection form={form} />
             <DocumentUploadTable form={form} />
           </div>

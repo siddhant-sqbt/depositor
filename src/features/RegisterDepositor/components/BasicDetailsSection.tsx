@@ -64,6 +64,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
+                  form.clearErrors();
                   handlePartyTypeChange();
                 }}
                 value={field.value}
@@ -100,164 +101,13 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {(selectedPartyType === "Individual" && fourthChar === "" ? ["Select", "Farmer", "Individual", "Proprietorship"] : subPartyType).map((type) => (
+                  {(selectedPartyType === "Individual" && fourthChar === "" ? ["Farmer", "Individual", "Proprietorship"] : subPartyType).map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Pin Number */}
-        {/* <FormField
-          control={form.control}
-          name="pinNumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Pincode</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Pincode" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
-        <FormField
-          control={form.control}
-          name="pinNumber"
-          render={({ field }) => {
-            // const selectedStateObj = STATE_PINCODE_OPTIONS.find((s) => s.value === Number(selectedState));
-
-            // const min = selectedStateObj?.minPincode ?? 0;
-            // const max = selectedStateObj?.maxPincode ?? 999999;
-            const min = 0;
-            const max = 999999;
-
-            return (
-              <FormItem>
-                <FormLabel>Pincode</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={`Enter Pincode`}
-                    {...field}
-                    min={min}
-                    max={max}
-                    onChange={(e) => {
-                      field.onChange(e);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            );
-          }}
-        />
-        {/* Name 1 */}
-        <FormField
-          control={form.control}
-          name="name1"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name 1 {getFieldRequiredStatus(registerDepositorFormSchema, "name1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
-              <FormControl>
-                <Input placeholder="First Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Name 2 */}
-        <FormField
-          control={form.control}
-          name="name2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name 2</FormLabel>
-              <FormControl>
-                <Input placeholder="Last Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Name 3 */}
-        <FormField
-          control={form.control}
-          name="name3"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name 3</FormLabel>
-              <FormControl>
-                <Input placeholder="Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Address Line 1 */}
-        <FormField
-          control={form.control}
-          name="address1"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address Line 1 {getFieldRequiredStatus(registerDepositorFormSchema, "address1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Address Line 1" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Address Line 2 */}
-        <FormField
-          control={form.control}
-          name="address2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address Line 2</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Address Line 2" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Address Line 3 */}
-        <FormField
-          control={form.control}
-          name="address3"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address Line 3</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Address Line 3" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* City */}
-        <FormField
-          control={form.control}
-          name="city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>City</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter City" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -313,11 +163,145 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
                 </FormControl>
                 <SelectContent>
                   {districts &&
+                    Array.isArray(districts) &&
+                    districts?.length > 0 &&
                     districts?.map((stateObj: IDistrict) => {
                       return <SelectItem value={`${stateObj?.id}`}>{stateObj?.long_desc}</SelectItem>;
                     })}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* City */}
+        <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>City</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter City" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="pinNumber"
+          render={({ field }) => {
+            const min = 0;
+            const max = 999999;
+
+            return (
+              <FormItem>
+                <FormLabel>Pincode</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder={`Enter Pincode`}
+                    {...field}
+                    min={min}
+                    max={max}
+                    onChange={(e) => {
+                      field.onChange(e);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+        {/* Name 1 */}
+        <FormField
+          control={form.control}
+          name="name1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name Line 1 {getFieldRequiredStatus(registerDepositorFormSchema, "name1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
+              <FormControl>
+                <Input placeholder="First Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Name 2 */}
+        <FormField
+          control={form.control}
+          name="name2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name Line 2</FormLabel>
+              <FormControl>
+                <Input placeholder="Last Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Name 3 */}
+        <FormField
+          control={form.control}
+          name="name3"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name Line 3</FormLabel>
+              <FormControl>
+                <Input placeholder="Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Address Line 1 */}
+        <FormField
+          control={form.control}
+          name="address1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 1 {getFieldRequiredStatus(registerDepositorFormSchema, "address1") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter Address Line 1" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Address Line 2 */}
+        <FormField
+          control={form.control}
+          name="address2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 2</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter Address Line 2" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Address Line 3 */}
+        <FormField
+          control={form.control}
+          name="address3"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address Line 3</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter Address Line 3" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
