@@ -40,8 +40,8 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
             <TableRow>
               <TableHead className="w-[200px]">Contact No</TableHead>
               <TableHead className="w-[250px]">Email</TableHead>
-              <TableHead className="w-[200px]">Contact Person</TableHead>
-              <TableHead className="w-[200px]">Contact Position</TableHead>
+              <TableHead className="w-[200px]">Person Name</TableHead>
+              <TableHead className="w-[200px]">Designation</TableHead>
               <TableHead className="w-[100px] text-center">Primary</TableHead>
               <TableHead className="w-[100px] text-center">SMS</TableHead>
               <TableHead className="w-[100px] text-center">Email</TableHead>
@@ -65,10 +65,10 @@ const ContactDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValue
                     <Input placeholder="Email" {...register(`contactDetails.${index}.email`)} />
                   </TableCell>
                   <TableCell className="p-2">
-                    <Input placeholder="Contact Person" {...register(`contactDetails.${index}.contactPerson`)} />
+                    <Input placeholder="Person Name" {...register(`contactDetails.${index}.contactPerson`)} />
                   </TableCell>
                   <TableCell className="p-2">
-                    <Input placeholder="Contact Position" {...register(`contactDetails.${index}.contactPosition`)} />
+                    <Input placeholder="Designation" {...register(`contactDetails.${index}.contactPosition`)} />
                   </TableCell>
                   <TableCell className="text-center p-2">
                     <input

@@ -27,6 +27,7 @@ const ServiceSecondarySection = ({ form }: { form: UseFormReturn<DocumentFormVal
     serviceDistrict: "",
     serviceCity: "",
     servicePincode: "",
+    isActive: false,
   };
 
   return (
@@ -56,6 +57,7 @@ const ServiceSecondarySection = ({ form }: { form: UseFormReturn<DocumentFormVal
               <TableHead className="w-[100px] text-center">District</TableHead>
               <TableHead className="w-[100px] text-center">City</TableHead>
               <TableHead className="w-[100px] text-center">Pincode</TableHead>
+              <TableHead className="w-[100px] text-center">Active Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,17 +115,22 @@ const ServiceSecondarySection = ({ form }: { form: UseFormReturn<DocumentFormVal
                   </TableCell>
                   <TableCell className="text-center p-2">
                     <Input placeholder="Enter Pincode" {...register(`serviceSecondaryAddress.${index}.servicePincode`)} />
+                  </TableCell>{" "}
+                  <TableCell className="text-center p-2">
+                    <Input type="checkbox" placeholder="Enter Pincode" {...register(`serviceSecondaryAddress.${index}.isActive`)} className="h-4 w-4 mx-auto" />
                   </TableCell>
                   <TableCell className="text-center p-2">
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => remove(index)}
-                      disabled={fields?.length === 1}
-                      className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    {index !== 0 && (
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => remove(index)}
+                        disabled={fields?.length === 1}
+                        className="h-8 w-8 cursor-pointer disabled:cursor-not-allowed"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

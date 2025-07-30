@@ -26,6 +26,8 @@ import { Loader2 } from "lucide-react";
 import ServiceSecondarySection from "./components/ServiceSecondarySection";
 import RepresentativeSection from "./components/RepresentativeSection";
 import { buildAttachments, buildDocumentsFromAttachments } from "@/lib/utils";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 // import RepresentativeSection from "./components/RepresentativeSection";
 
 // action_type (number), action_for (C or E)
@@ -38,10 +40,14 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
   const isView = subpaths?.includes("view");
   const isEdit = subpaths?.includes("edit");
 
-  const isEmployee = localStorage?.getItem("ROLE") === "E";
+  const { userRole } = useSelector((state: RootState) => state.auth);
+  const isEmployee = userRole === "E";
+
+  // const isEmployee = localStorage?.getItem("ROLE") === "E";
   const [isLoading, setIsLoading] = useState<boolean>((!!viewOnly || !!isEdit) && !!reqNumber);
 
   const form = useForm<DocumentFormValues>({
+    mode: "onBlur",
     resolver: zodResolver(registerDepositorFormSchema),
     defaultValues: async () => {
       if ((viewOnly || isEdit) && reqNumber) {
@@ -191,6 +197,10 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           address1: "",
           address2: "",
           address3: "",
+          state: "",
+          pinNumber: "",
+          city: "",
+          district: "",
           optionalFeatures: {
             forwarder: false,
             consolid: false,
@@ -202,7 +212,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
           isExporterImporter: "No",
           isCHA: "No",
           prefferedLocationDetails: {
-            warehouseType: "",
+            warehouseType: "WO",
             warehouseState: "",
             warehouseName: "",
             customerBranchName: "",
@@ -234,7 +244,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             },
           ],
 
-          contactDetails: [{ contactNo: "", email: "", contactPerson: "", isPrimary: true }],
+          contactDetails: [{ contactNo: "", email: "", contactPerson: "", contactPosition: "", isPrimary: true, primaryEmail: true, primarySms: true }],
           bankDetails: [{ bankName: "", accountHolderName: "", ifscCode: "", accountNo: "", country: "IN" }],
         };
       }
@@ -410,7 +420,7 @@ const RegisterDepositorForm: React.FC<IRegisterDepositorFormProps> = ({ viewOnly
             <OptionalFeaturesSection form={form} />
             <ContactDetailsSection form={form} />
             <ServiceSecondarySection form={form} />
-            {isEmployee && <RepresentativeSection form={form} />}
+            <RepresentativeSection form={form} />
             <BankDetailsSection form={form} />
             <DocumentUploadTable form={form} />
           </div>

@@ -119,7 +119,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="state"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>State</FormLabel>
+              <FormLabel>State {getFieldRequiredStatus(registerDepositorFormSchema, "state") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -154,7 +154,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="district"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>District</FormLabel>
+              <FormLabel>District {getFieldRequiredStatus(registerDepositorFormSchema, "district") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value} disabled={selectedState === ""}>
                 <FormControl className="w-full">
                   <SelectTrigger>
@@ -181,7 +181,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>City</FormLabel>
+              <FormLabel>City {getFieldRequiredStatus(registerDepositorFormSchema, "city") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
               <FormControl>
                 <Input placeholder="Enter City" {...field} />
               </FormControl>
@@ -199,7 +199,7 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
 
             return (
               <FormItem>
-                <FormLabel>Pincode</FormLabel>
+                <FormLabel>Pincode {getFieldRequiredStatus(registerDepositorFormSchema, "pinNumber") && <span className="text-red-500 ml-0.5">*</span>}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -207,6 +207,16 @@ const BasicDetailsSection = ({ form }: { form: UseFormReturn<DocumentFormValues>
                     {...field}
                     min={min}
                     max={max}
+                    onKeyDown={(e) => {
+                      if (["e", "E", "+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onInput={(e) => {
+                      if (e.currentTarget.value.length > 6) {
+                        e.currentTarget.value = e.currentTarget.value.slice(0, 6);
+                      }
+                    }}
                     onChange={(e) => {
                       field.onChange(e);
                     }}

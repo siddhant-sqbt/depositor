@@ -1,7 +1,6 @@
 import { toast } from "sonner";
 import z from "zod";
 import { isPincodeInState34, STATE_PINCODE_OPTIONS } from "./constants";
-import type { IStateObject } from "./types";
 
 export const registerDepositorFormSchema = z
   .object({
@@ -25,16 +24,16 @@ export const registerDepositorFormSchema = z
 
     partyType: z.string().min(1, "Party Type is required"),
     subPartyType: z.string().min(1, "Sub Party Type is required"),
-    pinNumber: z.string().optional(),
     name1: z.string().max(40).min(1, "Name is required"),
     name2: z.string().max(35).optional(),
     name3: z.string().max(80).optional(),
     address1: z.string().min(1, "Address Line 1 is required"),
     address2: z.string().optional(),
     address3: z.string().optional(),
-    city: z.string().optional(),
     state: z.string().optional(),
     district: z.string().optional(),
+    city: z.string().optional(),
+    pinNumber: z.string().min(1, "Pincode is required"),
 
     isExporterImporter: z.enum(["Yes", "No"], { message: "Please choose Exporter/Importer option" }),
     iecNumber: z.string().optional(),
@@ -62,6 +61,7 @@ export const registerDepositorFormSchema = z
         serviceDistrict: z.string().optional(),
         serviceCity: z.string().optional(),
         servicePincode: z.string().optional(),
+        isActive: z.boolean().optional(),
       })
     ),
 
